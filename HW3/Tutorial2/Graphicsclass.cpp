@@ -28,7 +28,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	bool result;
 	D3DXMATRIX baseViewMatrix;
 
-	m_ModelMax = 8;
+	m_ModelMax = 25;
 
 	//Create the Direct3D object.
 	m_D3D = new D3DClass;
@@ -86,15 +86,17 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
+
 	for (int i = 3; i < m_ModelMax-1; i++)
 	{
 		result = m_Model[i].Initialize(m_D3D->GetDevice(),
-			(char*)"../Tutorial2/data/cube.obj", (WCHAR*)L"../Tutorial2/data/floor.dds"); //error 시 여기 확인
+			(char*)"../Tutorial2/data/cube.obj", (WCHAR*)L"../Tutorial2/data/Tex_0012_0.png"); //error 시 여기 확인
 		if (!result) {
 			MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 			return false;
 		}
 	}
+
 	//HW2 - 3
 	result = m_plane_Model->Initialize(m_D3D->GetDevice(),
 		(char*)"../Tutorial2/data/plane.obj", (WCHAR*)L"../Tutorial2/data/floor.dds"); //error 시 여기 확인
@@ -103,12 +105,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	/*
 	result = m_Model[7].Initialize(m_D3D->GetDevice(),
 		(char*)"../Tutorial2/data/warppipe.obj", (WCHAR*)L"../Tutorial2/data/warppipe.dds"); //error 시 여기 확인
 	if (!result) {
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
+	*/
 
 	
 	/*// Create the texture shader object.
@@ -440,12 +444,12 @@ bool GraphicsClass::Render(float rotation) {
 		//HW3 - 1 Wall
 		// Rotate the world matrix by the rotation value so that the triangle will spin.
 		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
-		D3DXMatrixScaling(&translateMatrix, 150.0f, 30.0f, 10.0f);
+		D3DXMatrixScaling(&translateMatrix, 250.0f, 50.0f, 5.0f);
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
-		D3DXMatrixTranslation(&translateMatrix, -50.0f, 15.0f, 0.0f);
+		D3DXMatrixTranslation(&translateMatrix, 0.0f, 15.0f, -30.0f);
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
-		m_Model[3].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+		m_Model[3].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3	bottom_length_wall
 
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[3].GetIndexCount(), worldMatrix,
@@ -456,12 +460,12 @@ bool GraphicsClass::Render(float rotation) {
 
 		// Rotate the world matrix by the rotation value so that the triangle will spin.
 		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
-		D3DXMatrixScaling(&translateMatrix, 10.0f, 30.0f, 130.0f);
+		D3DXMatrixScaling(&translateMatrix, 5.0f, 50.0f, 170.0f);
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
-		D3DXMatrixTranslation(&translateMatrix, -120.0f, 15.0f, 65.0f);
+		D3DXMatrixTranslation(&translateMatrix, -125.0f, 15.0f, 55.0f);
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
-		m_Model[4].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+		m_Model[4].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3	left_length_wall
 
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[4].GetIndexCount(), worldMatrix,
@@ -472,12 +476,12 @@ bool GraphicsClass::Render(float rotation) {
 
 		// Rotate the world matrix by the rotation value so that the triangle will spin.
 		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
-		D3DXMatrixScaling(&translateMatrix, 250.0f, 30.0f, 10.0f);
+		D3DXMatrixScaling(&translateMatrix, 250.0f, 50.0f, 5.0f);
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 		D3DXMatrixTranslation(&translateMatrix, 0.0f, 15.0f, 130.0f);
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
-		m_Model[5].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+		m_Model[5].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3	//up_length_wall
 
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[5].GetIndexCount(), worldMatrix,
@@ -488,14 +492,14 @@ bool GraphicsClass::Render(float rotation) {
 
 		// Rotate the world matrix by the rotation value so that the triangle will spin.
 		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
-		D3DXMatrixScaling(&translateMatrix, 10.0f, 30.0f, 130.0f);
+		D3DXMatrixScaling(&translateMatrix, 5.0f, 50.0f, 170.0f);
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
-		D3DXMatrixTranslation(&translateMatrix, 120.0f, 15.0f, 65.0f);
+		D3DXMatrixTranslation(&translateMatrix, 125.0f, 15.0f, 55.0f);
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
-		m_Model[6].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+		m_Model[6].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3	//right_length_wall
 
-
+		
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[6].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[6].GetTexture(), m_Light->GetDirection(),
@@ -505,9 +509,9 @@ bool GraphicsClass::Render(float rotation) {
 
 		// Rotate the world matrix by the rotation value so that the triangle will spin.
 		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
-		//D3DXMatrixScaling(&translateMatrix, 1.0f, 30.0f, 130.0f);
-		//D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
-		D3DXMatrixTranslation(&translateMatrix, 9.0f, 0.0f, 65.0f);
+		D3DXMatrixScaling(&translateMatrix, 3.0f, 50.0f, 30.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, -80.0f, 15.0f, 100.0f);
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[7].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
@@ -519,6 +523,289 @@ bool GraphicsClass::Render(float rotation) {
 			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
 			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 		if (!result) { return false; }
+
+		// Rotate the world matrix by the rotation value so that the triangle will spin.
+		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		D3DXMatrixScaling(&translateMatrix, 100.0f, 50.0f, 3.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, -50.0f, 15.0f, 85.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
+		m_Model[8].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+		// Render the model using the texture shader.
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[8].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[8].GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+
+		// Rotate the world matrix by the rotation value so that the triangle will spin.
+		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		D3DXMatrixScaling(&translateMatrix, 50.0f, 50.0f, 3.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, -100.0f, 15.0f, 55.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
+		m_Model[9].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+		// Render the model using the texture shader.
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[9].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[9].GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+
+		// Rotate the world matrix by the rotation value so that the triangle will spin.
+		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		D3DXMatrixScaling(&translateMatrix, 100.0f, 50.0f, 3.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, 27.0f, 15.0f, 55.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
+		m_Model[10].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+		// Render the model using the texture shader.
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[10].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[10].GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+
+		// Rotate the world matrix by the rotation value so that the triangle will spin.
+		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		D3DXMatrixScaling(&translateMatrix, 3.0f, 50.0f, 90.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, 50.0f, 15.0f, 100.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
+		m_Model[11].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+
+		// Render the model using the texture shader.
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[11].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[11].GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+
+		// Rotate the world matrix by the rotation value so that the triangle will spin.
+		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		D3DXMatrixScaling(&translateMatrix, 3.0f, 50.0f, 90.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, 50.0f, 15.0f, 100.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
+		m_Model[12].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+		// Render the model using the texture shader.
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[12].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[12].GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+
+		// Rotate the world matrix by the rotation value so that the triangle will spin.
+		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		D3DXMatrixScaling(&translateMatrix, 30.0f, 50.0f, 3.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, 90.0f, 15.0f, 85.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
+		m_Model[22].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+		// Render the model using the texture shader.
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[22].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[22].GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+
+		// Rotate the world matrix by the rotation value so that the triangle will spin.
+		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		D3DXMatrixScaling(&translateMatrix, 3.0f, 50.0f, 30.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, 75.0f, 15.0f, 70.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
+		m_Model[13].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+
+		// Render the model using the texture shader.
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[13].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[13].GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+		
+		// Rotate the world matrix by the rotation value so that the triangle will spin.
+		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		D3DXMatrixScaling(&translateMatrix, 60.0f, 50.0f, 3.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, -50.0f, 15.0f, 35.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
+		m_Model[14].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+		// Render the model using the texture shader.
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[14].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[14].GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }\
+
+		// Rotate the world matrix by the rotation value so that the triangle will spin.
+		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		D3DXMatrixScaling(&translateMatrix, 60.0f, 50.0f, 3.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, 90.0f, 15.0f, 35.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
+		m_Model[15].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+		// Render the model using the texture shader.
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[15].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[15].GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+
+		// Rotate the world matrix by the rotation value so that the triangle will spin.
+		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		D3DXMatrixScaling(&translateMatrix, 130.0f, 50.0f, 3.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, -60.0f, 15.0f, 5.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
+		m_Model[16].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+		// Render the model using the texture shader.
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[16].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[16].GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+
+		// Rotate the world matrix by the rotation value so that the triangle will spin.
+		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		D3DXMatrixScaling(&translateMatrix, 3.0f, 50.0f, 30.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, -50.0f, 15.0f, 20.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
+		m_Model[17].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+
+		// Render the model using the texture shader.
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[17].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[17].GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+
+		// Rotate the world matrix by the rotation value so that the triangle will spin.
+		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		D3DXMatrixScaling(&translateMatrix, 3.0f, 50.0f, 20.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, -80.0f, 15.0f, -10.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
+		m_Model[18].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+
+		// Render the model using the texture shader.
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[18].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[18].GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+
+		// Rotate the world matrix by the rotation value so that the triangle will spin.
+		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		D3DXMatrixScaling(&translateMatrix, 3.0f, 50.0f, 20.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, -50.0f, 15.0f, -20.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
+		m_Model[19].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+
+		// Render the model using the texture shader.
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[19].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[19].GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+
+		// Rotate the world matrix by the rotation value so that the triangle will spin.
+		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		D3DXMatrixScaling(&translateMatrix, 3.0f, 50.0f, 20.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, 3.7f, 15.0f, -7.5f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
+		m_Model[20].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+
+		// Render the model using the texture shader.
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[20].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[20].GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+
+		// Rotate the world matrix by the rotation value so that the triangle will spin.
+		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		D3DXMatrixScaling(&translateMatrix, 3.0f, 50.0f, 50.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, 30.0f, 15.0f, 30.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
+		m_Model[21].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+
+		// Render the model using the texture shader.
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[21].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[21].GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+
+		// Rotate the world matrix by the rotation value so that the triangle will spin.
+		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		D3DXMatrixScaling(&translateMatrix, 3.0f, 50.0f, 50.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, 80.0f, 15.0f, 10.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
+		m_Model[21].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+
+		// Render the model using the texture shader.
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[21].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[21].GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+
+		// Rotate the world matrix by the rotation value so that the triangle will spin.
+		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		D3DXMatrixScaling(&translateMatrix, 250.0f, 10.0f, 100.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		D3DXMatrixTranslation(&translateMatrix, 0.0f, 0.0f, 20.0f);
+		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
+		m_Model[23].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+
+		// Render the model using the texture shader.
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[23].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[23].GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+
+
 
 	//HW2 - 3
 	//HW3 - 1
