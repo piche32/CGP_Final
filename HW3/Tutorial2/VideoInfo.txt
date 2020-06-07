@@ -1,2 +1,0 @@
-Video Card Name: Intel(R) HD Graphics 530 
-Video Card Memory: 128 
