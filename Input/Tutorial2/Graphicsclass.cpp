@@ -313,7 +313,7 @@ void GraphicsClass::Shutdown() {
 
 	return;
 }
-bool GraphicsClass::Frame(int fps, int cpu, float frameTime, int mouseX, int mouseY) {
+bool GraphicsClass::Frame(int screenWidth, int screenHeight, int fps, int cpu, float frameTime, int mouseX, int mouseY) {
 	bool result;
 
 	static float rotation = 0;
@@ -348,8 +348,10 @@ bool GraphicsClass::Frame(int fps, int cpu, float frameTime, int mouseX, int mou
 	result = m_Text->SetMousePosition(mouseX, mouseY, m_D3D->GetDeviceContext());
 	if (!result) return false;
 
-	
-	//m_Camera->move(mouseX, mouseY);
+	D3DXMATRIX projectionMatrix, worldMatrix;
+	m_D3D->GetProjectionMatrix(projectionMatrix);
+	m_D3D->GetWorldMatrix(worldMatrix);
+//	m_Camera->move(screenWidth, screenHeight,projectionMatrix, worldMatrix, mouseX, mouseY);
 
 	//Render the graphics scene.
 	result = Render(rotation);
@@ -435,7 +437,6 @@ bool GraphicsClass::Render(float rotation) {
 			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
 			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 		if (!result) { return false; }
-
 
 		// Rotate the world matrix by the rotation value so that the triangle will spin.
 
@@ -634,4 +635,8 @@ void GraphicsClass::countPolygons() {
 
 
 	m_ModelIndex += m_plane_Model->GetIndexCount();
+}
+
+void GraphicsClass::cameraMouseMove(float& x, float& y) {
+	m_Camera->mouseMove(x, y);
 }

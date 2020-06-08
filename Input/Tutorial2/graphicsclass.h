@@ -30,7 +30,7 @@ public:
 		 bool Initialize(int, int, HWND);
 		 void Shutdown(); 
 		 //bool Frame();
-		 bool Frame(int, int, float, int, int);
+		 bool Frame(int, int, int, int, float, int, int);
 
 private: 
 	bool Render(float); //bool Render(float*) HW2 - 3
@@ -60,6 +60,8 @@ public:
 
 	//HW3 - 4
 	void cameraMove(const char);
+	void cameraMouseMove(float&, float&);
+
 
 	//HW3 - 3
 	void countPolygons();

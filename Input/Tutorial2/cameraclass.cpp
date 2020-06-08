@@ -59,8 +59,11 @@ void CameraClass::Render() {
 	lookAt.z = m_lookAt.z;
 
 	// Set the yaw (Y axis), pitch (X axis), and roll (Z axis) rotations in radians. 
-	pitch = m_rotationX * 0.0174532925f; 
-	yaw   = m_rotationY * 0.0174532925f; 
+	//pitch = m_rotationX * 0.0174532925f; 
+	//yaw   = m_rotationY * 0.0174532925f; 
+	
+	pitch = m_pitch;
+	yaw = m_yaw;
 	roll  = m_rotationZ * 0.0174532925f; 
 
 	// Create the rotation matrix from the yaw, pitch, and roll values. 
@@ -84,12 +87,7 @@ void CameraClass::GetViewMatrix(D3DXMATRIX& viewMatrix) {
 	return; 
 }
 
-void CameraClass::move(int mouseX, int mouseY) {
-	D3DXVECTOR3 mousePos;
-
-	mousePos.x = (float)mouseX;
-	mousePos.y = (float)mouseY;
-	mousePos.y = 1.0f;
-
-	return;
+void CameraClass::mouseMove(float& x, float& y) {
+	m_yaw += x;
+	m_pitch += y;
 }

@@ -35,17 +35,22 @@ private:
 	IDirectInputDevice8* m_mouse = nullptr;
 
 	//unsigned char m_keyboardState[256] = { 0, };
-	DIMOUSESTATE m_mouseState;
+	DIMOUSESTATE m_mouseState, mouseLastState;
 
 	int m_screenWidth, m_screenHeight;
 	int m_mouseX, m_mouseY;
-
 
 public:
 	void KeyDown(unsigned int); 
 	void KeyUp(unsigned int);
 
 	bool IsKeyDown(unsigned int);
+
+	int getScreenHeight();
+	int getScreenWidth();
+
+	void isMouseMove(float&, float&);
+
 private:
 	bool m_keys[256];
 

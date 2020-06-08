@@ -176,7 +176,6 @@ bool SystemClass::Frame() {
 	}
 
 	// Get the location of the mouse from the input object,
-	m_Input->GetMouseLocation(mouseX, mouseY);
 
 	
 	if(m_Input->IsKeyDown('1'))
@@ -207,11 +206,15 @@ bool SystemClass::Frame() {
 	m_Fps->Frame();
 	m_Cpu->Frame();
 
+	float mX, mY;
+	m_Input->isMouseMove(mX, mY);
+	m_Graphics->cameraMouseMove(mX , mY);
 
-	//cameraMove(m_Input);
+	m_Input->GetMouseLocation(mouseX, mouseY);
 
 	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame(m_Fps->GetFps(), m_Cpu->GetCpuPercentage(), m_Timer->GetTime(), mouseX, mouseY);
+	result = m_Graphics->Frame(m_Input->getScreenWidth(), m_Input->getScreenHeight(),
+		m_Fps->GetFps(), m_Cpu->GetCpuPercentage(), m_Timer->GetTime(), mouseX, mouseY);
 	//result = m_Graphics->Frame(mouseX, mouseY);
 	if(!result)  { 
 		return false;
@@ -221,28 +224,29 @@ bool SystemClass::Frame() {
 
 LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM   lparam) {
 
-	switch (umsg) { 
+	switch (umsg) {
 		// Check if a key has been pressed on the keyboard.
-	case WM_KEYDOWN: 
-	{  
+	case WM_KEYDOWN:
+	{
 		// If a key is pressed send it to the input object so it can record that state.  
-		m_Input->KeyDown((unsigned int)wparam); 
-		return 0; 
-	} 
+		m_Input->KeyDown((unsigned int)wparam);
+		return 0;
+	}
 	// Check if a key has been released on the keyboard.
 	case WM_KEYUP:
-	{    
+	{
 		// If a key is released then send it to the input object so it can unset the state for that key.
-		m_Input->KeyUp((unsigned int)wparam); 
-		return 0;   
-	} 
+		m_Input->KeyUp((unsigned int)wparam);
+		return 0;
+	}
 
-   // Any other messages send to the default message handler as our application won't make use of them. 
-	default: 
-	{    
-		return DefWindowProc(hwnd, umsg, wparam, lparam); 
-	} 
-	} 
+	// Any other messages send to the default message handler as our application won't make use of them. 
+	default:
+	{
+		return DefWindowProc(hwnd, umsg, wparam, lparam);
+	}
+
+	}
 } 
 
 void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight) {

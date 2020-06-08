@@ -449,7 +449,7 @@ bool TextClass::SetMousePosition(int mouseX, int mouseY, ID3D11DeviceContext* de
 
 	// Convert the mouseX integer to string format.
 	_itoa_s(mouseX, tempString, 10);
-
+	
 	// Setup the mouseX string.
 	strcpy_s(mouseString, "Mouse X: ");
 	strcat_s(mouseString, tempString);
