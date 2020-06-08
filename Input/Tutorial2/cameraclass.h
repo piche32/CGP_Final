@@ -12,22 +12,26 @@ public:
 
 		 void SetPosition(float, float, float); 
 		 void SetRotation(float, float, float);
+		 void SetLookAt(D3DXVECTOR3 lookAt);
+
 
 		 D3DXVECTOR3 GetPosition(); 
 		 D3DXVECTOR3 GetRotation();
 
 		 void Render(); 
 		 void GetViewMatrix(D3DXMATRIX&);
-		 void mouseMove(float&, float& );
 		 float m_yaw, m_pitch;
+		 D3DXVECTOR3 GetLookAt();
+
+		D3DXVECTOR3 GetRightDirection();
+		D3DXVECTOR3 GetForwardDirection();
 
 
 private:  
 	float m_positionX, m_positionY, m_positionZ;
 	float m_rotationX, m_rotationY, m_rotationZ;
 	D3DXMATRIX m_viewMatrix;
-	D3DXVECTOR3 m_lookAt;
-	D3DXVECTOR3 m_prelookAt;
+	D3DXVECTOR3 m_lookAt, m_front, m_right;
 };
 
 #endif

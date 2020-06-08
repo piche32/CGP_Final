@@ -56,9 +56,9 @@ bool FontShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* v
 	ID3D10Blob* pixelShaderBuffer;
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[2];
 	unsigned int numElements;
-	//D3D11_BUFFER_DESC matrixBufferDesc; //오류나면 주석풀기
+	D3D11_BUFFER_DESC constantBufferDesc; 
 	D3D11_SAMPLER_DESC samplerDesc;
-	D3D11_BUFFER_DESC pixelBufferDesc, constantBufferDesc;
+	D3D11_BUFFER_DESC pixelBufferDesc;
 
 
 	// Initialize the pointers this function will use to null. 
@@ -159,19 +159,6 @@ bool FontShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* v
 	result = device->CreateBuffer(&constantBufferDesc, NULL, &m_constantBuffer);
 	if (FAILED(result)) { return false; }
 
-	// Setup the description of the dynamic pixel constant buffer that is in the pixel shader.
-	pixelBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	pixelBufferDesc.ByteWidth = sizeof(PixelBufferType);
-	pixelBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	pixelBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	pixelBufferDesc.MiscFlags = 0;
-	pixelBufferDesc.StructureByteStride = 0;
-	// Create the pixel constant buffer pointer so we can access the pixel shader constant buffer from within this class.
-	result = device->CreateBuffer(&pixelBufferDesc, NULL, &m_pixelBuffer);
-	if (FAILED(result))
-	{
-		return false;
-	}
 
 	// Create a texture sampler state description.
 	samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -194,14 +181,25 @@ bool FontShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* v
 		return false;
 	}
 
+	// Setup the description of the dynamic pixel constant buffer that is in the pixel shader.
+	pixelBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	pixelBufferDesc.ByteWidth = sizeof(PixelBufferType);
+	pixelBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	pixelBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	pixelBufferDesc.MiscFlags = 0;
+	pixelBufferDesc.StructureByteStride = 0;
+	// Create the pixel constant buffer pointer so we can access the pixel shader constant buffer from within this class.
+	result = device->CreateBuffer(&pixelBufferDesc, NULL, &m_pixelBuffer);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
 	return true;
 }
 
 void FontShaderClass::ShutdownShader() {
 	// Release the matrix constant buffer.
-	/*if (m_matrixBuffer) {
-		m_matrixBuffer->Release();
-		m_matrixBuffer = 0;
 
 		// Release the sampler state.
 		if (m_sampleState)
@@ -209,7 +207,6 @@ void FontShaderClass::ShutdownShader() {
 			m_sampleState->Release();
 			m_sampleState = 0;
 		}
-	}*/ //오류나면 주석풀기
 
 	// Release the layout. 
 	if (m_layout) {
@@ -285,28 +282,26 @@ bool FontShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	ID3D11ShaderResourceView* texture, D3DXVECTOR4 pixelColor) {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	//MatrixBufferType* dataPtr;
 	ConstantBufferType* dataPtr;
 
 	unsigned int bufferNumber;
 
 	PixelBufferType* dataPtr2;
+	
+
+	result = deviceContext->Map(m_constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result)) { return false; }
+
+	// Get a pointer to the data in the constant buffer.
+	dataPtr = (ConstantBufferType*)mappedResource.pData;
 
 	// Transpose the matrices to prepare them for the shader.
 	D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
 	D3DXMatrixTranspose(&viewMatrix, &viewMatrix);
 	D3DXMatrixTranspose(&projectionMatrix, &projectionMatrix);
 
-	//오류나면 주석풀기
-	// Lock the constant buffer so it can be written to.
-	/*result = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	if (FAILED(result)) { return false; }
+	
 
-	// Get a pointer to the data in the constant buffer.
-	dataPtr = (ConstantBufferType*)mappedResource.pData;*/
-
-	result = deviceContext->Map(m_constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-if (FAILED(result)) { return false; }
 
 // Get a pointer to the data in the constant buffer.
 dataPtr = (ConstantBufferType*)mappedResource.pData;
@@ -317,14 +312,12 @@ dataPtr = (ConstantBufferType*)mappedResource.pData;
 	dataPtr->projection = projectionMatrix;
 
 	// Unlock the constant buffer. 
-	deviceContext->Unmap(m_constantBuffer, 0); //오류나면 아래와 바꾸기
-	//deviceContext->Unmap(m_matrixBuffer, 0);
+	deviceContext->Unmap(m_constantBuffer, 0); 
 
 	// Set the position of the constant buffer in the vertex shader. 
 	bufferNumber = 0;
 
 	// Finanly set the constant buffer in the vertex shader with the updated values. 
-	//deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer); //오류나면 주석 풀기
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_constantBuffer);
 
 	// Set shader texture resource in the pixel shader.
@@ -371,36 +364,3 @@ void FontShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int index
 
 	return;
 }
-
-//HW2 - 4
-/*bool TextureShaderClass::SetSamplingFilter(const int input, ID3D11Device* device) {
-	D3D11_SAMPLER_DESC samplerDesc;
-	if (input == 1) {
-		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-	}
-	else if (input == 2) {
-		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	}
-	else if (input == 3) {
-		samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-	}
-
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.MipLODBias = 0.0f;
-	samplerDesc.MaxAnisotropy = 1;
-	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	samplerDesc.BorderColor[0] = 0;
-	samplerDesc.BorderColor[1] = 0;
-	samplerDesc.BorderColor[2] = 0;
-	samplerDesc.BorderColor[3] = 0;
-	samplerDesc.MinLOD = 0;
-	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
-	HRESULT result = device->CreateSamplerState(&samplerDesc, &m_sampleState);
-	if (FAILED(result)) {
-		return false;
-	}
-	return true;
-}*/

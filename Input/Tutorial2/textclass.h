@@ -43,15 +43,14 @@ private:
 	int m_screenWidth, m_screenHeight;
 	D3DXMATRIX m_baseViewMatrix;
 
-	SentenceType* m_sentence1;
-	SentenceType* m_sentence2;
-	SentenceType* m_sentence3;
-	SentenceType* m_sentence4;
-	SentenceType* m_sentence5;
+	SentenceType** m_sentence;
+	int maxSentence;
 
 public:
 	bool SetFps(int, ID3D11DeviceContext*);
 	bool SetCpu(int, ID3D11DeviceContext*);
 	bool CountPolygons(const int, ID3D11DeviceContext*);
+	bool SetCameraInfo(D3DXVECTOR3, D3DXVECTOR3, ID3D11DeviceContext*);
+
 };
 #endif

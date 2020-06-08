@@ -14,8 +14,12 @@
 #include "bitmapclass.h"
 #include "textclass.h"
 
+#include <dinput.h>
+#pragma comment(lib, "dinput8.lib")
+#pragma comment(lib, "dxguid.lib")
+
 // Globals 
-const bool FULL_SCREEN = false; //const bool FULL_SCREEN =  false; Tutorial1-2-1 => Tutorial1-3에서 true로 바꾸면 오류가 뜬다.. D3DClass의 EndScene에서 경고해서 그런 것 같다.
+const bool FULL_SCREEN = true; //const bool FULL_SCREEN =  false; Tutorial1-2-1 => Tutorial1-3에서 true로 바꾸면 오류가 뜬다.. D3DClass의 EndScene에서 경고해서 그런 것 같다.
 const bool VSYNC_ENABLED = false;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.1f; 
@@ -45,7 +49,7 @@ private:
 	LightClass* m_Light;
 	BitmapClass* m_Bitmap;
 	TextClass* m_Text;
-
+	D3DXMATRIX m_baseViewMatrix;
 	//HW2 - 4
 public:
 	//TextureShaderClass* getTextureShader();
@@ -53,18 +57,18 @@ public:
 
 	//HW2 - 3
 	ModelClass* m_plane_Model;
-	int m_ModelIndex, m_ModelMax, m_ModelVertex;
+	int m_ModelIndex, m_ModelMax, m_ModelVertex, m_StarNum, m_WallNum;
 	
 	//HW3 - 2
 	void changeLight(const int);
 
 	//HW3 - 4
 	void cameraMove(const char);
-	void cameraMouseMove(float&, float&);
+	void MouseInput(const DIMOUSESTATE);
 
 
 	//HW3 - 3
-	void countPolygons();
+	int countPolygons();
 
 };
 

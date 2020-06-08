@@ -12,6 +12,9 @@ CameraClass::CameraClass() {
 	m_lookAt.x = 0.0f;
 	m_lookAt.y = 0.0f;
 	m_lookAt.z = 1.0f;
+
+	m_right = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
+	m_front = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
 }
 
 CameraClass::CameraClass(const CameraClass& other) { }
@@ -53,17 +56,15 @@ void CameraClass::Render() {
 	position.y = m_positionY;
 	position.z = m_positionZ;
 
+	D3DXVec3Normalize(&lookAt, &m_lookAt);
 	// Setup where the camera is looking by default.
-	lookAt.x = m_lookAt.x; 
+	/*lookAt.x = m_lookAt.x; 
 	lookAt.y = m_lookAt.y;
-	lookAt.z = m_lookAt.z;
+	lookAt.z = m_lookAt.z;*/
 
 	// Set the yaw (Y axis), pitch (X axis), and roll (Z axis) rotations in radians. 
-	//pitch = m_rotationX * 0.0174532925f; 
-	//yaw   = m_rotationY * 0.0174532925f; 
-	
-	pitch = m_pitch;
-	yaw = m_yaw;
+	pitch = m_rotationX * 0.0174532925f; 
+	yaw   = m_rotationY * 0.0174532925f; 
 	roll  = m_rotationZ * 0.0174532925f; 
 
 	// Create the rotation matrix from the yaw, pitch, and roll values. 
@@ -87,7 +88,31 @@ void CameraClass::GetViewMatrix(D3DXMATRIX& viewMatrix) {
 	return; 
 }
 
-void CameraClass::mouseMove(float& x, float& y) {
-	m_yaw += x;
-	m_pitch += y;
+D3DXVECTOR3 CameraClass::GetLookAt() {
+	return m_lookAt;
+}
+
+D3DXVECTOR3 CameraClass::GetRightDirection() {
+	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+	D3DXVECTOR3 rightVector;
+	D3DXVec3Cross(&rightVector, &up, &m_front);
+	D3DXVec3Normalize(&m_right, &rightVector);
+
+	return m_right;
+
+}
+
+D3DXVECTOR3 CameraClass::GetForwardDirection() {
+	D3DXVECTOR3 pos = GetPosition();
+	D3DXVECTOR3 lookAt = GetLookAt();
+
+	D3DXVec3Normalize(&m_front, &(lookAt - pos));
+	
+	return m_front;
+
+}
+
+void CameraClass::SetLookAt(D3DXVECTOR3 lookAt) {
+	m_lookAt = lookAt;
+	return;
 }

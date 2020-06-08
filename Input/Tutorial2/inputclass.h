@@ -48,9 +48,7 @@ public:
 
 	int getScreenHeight();
 	int getScreenWidth();
-
-	void isMouseMove(float&, float&);
-
+	DIMOUSESTATE getMouseState();
 private:
 	bool m_keys[256];
 

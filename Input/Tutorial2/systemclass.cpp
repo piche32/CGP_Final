@@ -198,7 +198,12 @@ bool SystemClass::Frame() {
 	}
 	if (m_Input->IsKeyDown(('D'))) {
 		m_Graphics->cameraMove('D');
-
+	}
+	if (m_Input->IsKeyDown(('Q'))) {
+		m_Graphics->cameraMove('Q');
+	}
+	if (m_Input->IsKeyDown(('E'))) {
+		m_Graphics->cameraMove('E');
 	}
 
 	// Update the system stats.
@@ -206,10 +211,7 @@ bool SystemClass::Frame() {
 	m_Fps->Frame();
 	m_Cpu->Frame();
 
-	float mX, mY;
-	m_Input->isMouseMove(mX, mY);
-	m_Graphics->cameraMouseMove(mX , mY);
-
+	m_Graphics->MouseInput(m_Input->getMouseState());
 	m_Input->GetMouseLocation(mouseX, mouseY);
 
 	// Do the frame processing for the graphics object.
@@ -375,22 +377,3 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 void  SystemClass::changelight(const int key) {
 	m_Graphics->changeLight(key);
 }
-
-//HW3 - 4
-/*void SystemClass::cameraMove(InputClass* const key) {
-	if (key->IsKeyDown(('w'))) {
-		m_Graphics->cameraMove('w');
-	}
-	if (key->IsKeyDown(('a'))) {
-		m_Graphics->cameraMove('a');
-
-	}
-	if (key->IsKeyDown(('s'))) {
-		m_Graphics->cameraMove('s');
-
-	}
-	if (key->IsKeyDown(('d'))) {
-		m_Graphics->cameraMove('d');
-
-	}
-}*/

@@ -213,11 +213,6 @@ int InputClass::getScreenHeight() {
 	return m_screenHeight;
 }
 
-void InputClass::isMouseMove(float& mX, float& mY) {
-	if ((m_mouseState.lX != mouseLastState.lX) || (m_mouseState.lY != mouseLastState.lY)) {
-		mX = mouseLastState.lX * 0.001f;
-		mY = m_mouseState.lY * 0.001f;
-	}
-	mouseLastState = m_mouseState;
+DIMOUSESTATE InputClass::getMouseState() {
+	return m_mouseState;
 }
-
