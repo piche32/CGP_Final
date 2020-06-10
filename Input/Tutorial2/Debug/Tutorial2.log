@@ -1,6 +1,2 @@
-﻿  Graphicsclass.cpp
-  c:\program files (x86)\microsoft directx sdk (june 2010)\include\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
-  main.cpp
-  systemclass.cpp
-  코드를 생성하고 있습니다...
-  Tutorial2.vcxproj -> C:\Users\박소현\Desktop\Input\Debug\Tutorial2.exe
+﻿  Soundclass.cpp
+  Tutorial2.vcxproj -> C:\Users\gts16\Desktop\direct\CGP_Final\Input\Debug\Tutorial2.exe

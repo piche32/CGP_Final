@@ -12,6 +12,7 @@
 #include "fpsclass.h"
 #include "cpuclass.h"
 #include "timerclass.h"
+#include "Soundclass.h"
 
 class SystemClass {
 public:
@@ -40,6 +41,7 @@ private:
 	FpsClass* m_Fps;
 	CpuClass* m_Cpu;
 	TimerClass* m_Timer;
+	SoundClass* m_Sound;
 
 	void changelight(const int);
 	//void cameraMove(InputClass *const);
