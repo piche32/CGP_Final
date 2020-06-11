@@ -75,6 +75,9 @@
     <ClCompile Include="Soundclass.cpp">
       <Filter>리소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Fogshaderclass.cpp">
+      <Filter>리소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="systemclass.h">
@@ -134,6 +137,9 @@
     <ClInclude Include="Soundclass.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Fogshaderclass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="color.vs">
@@ -158,6 +164,12 @@
       <Filter>소스 파일</Filter>
     </None>
     <None Include="font.ps">
+      <Filter>소스 파일</Filter>
+    </None>
+    <None Include="fog.ps">
+      <Filter>소스 파일</Filter>
+    </None>
+    <None Include="fog.vs">
       <Filter>소스 파일</Filter>
     </None>
   </ItemGroup>

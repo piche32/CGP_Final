@@ -13,6 +13,7 @@
 #include "textureshaderclass.h"
 #include "bitmapclass.h"
 #include "textclass.h"
+#include "Fogshaderclass.h"
 
 #include <dinput.h>
 #pragma comment(lib, "dinput8.lib")
@@ -50,6 +51,9 @@ private:
 	BitmapClass* m_Bitmap;
 	TextClass* m_Text;
 	D3DXMATRIX m_baseViewMatrix;
+
+	FogShaderClass* m_FogShader;
+
 	//HW2 - 4
 public:
 	//TextureShaderClass* getTextureShader();

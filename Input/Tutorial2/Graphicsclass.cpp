@@ -13,6 +13,7 @@ GraphicsClass::GraphicsClass() {
 	//HW2 - 3
 	m_plane_Model = 0;
 	m_ModelIndex = 0;
+	m_FogShader = 0;
 
 	m_StarNum = 5;
 	m_WallNum = 21;
@@ -49,6 +50,15 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}*/
 
+	m_FogShader = new FogShaderClass;
+	if (!m_FogShader) { return false; }
+
+	result = m_FogShader->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result) {
+		MessageBox(hwnd, L"Could not initialize the fog shader object", L"Error", MB_OK);
+		return false;
+	}
+
 	// Create the camera object. 
 	m_Camera = new CameraClass; 
 	if(!m_Camera)  {   return false;  } 
@@ -71,7 +81,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Camera->Render();
 	m_Camera->GetViewMatrix(baseViewMatrix);
  // Set the initial position of the camera.
-	m_Camera->SetPosition(0.0f, 100.0f, -100.0f); //m_Camera->SetPosition(0.0f, 0.0f, -10.0f); tutorial2 - 1 수정 HW2 - 4
+	m_Camera->SetPosition(0.0f, 40.0f, -100.0f); //m_Camera->SetPosition(0.0f, 0.0f, -10.0f); tutorial2 - 1 수정 HW2 - 4
 	m_Camera->SetLookAt(D3DXVECTOR3(0.0f, 0.0f, 1.0f));
 	
 
@@ -323,6 +333,12 @@ void GraphicsClass::Shutdown() {
 		m_Text = 0;
 	}
 
+	if (m_FogShader) {
+		m_FogShader->Shutdown();
+		delete m_FogShader;
+		m_FogShader = 0;
+	}
+
 	return;
 }
 bool GraphicsClass::Frame(int screenWidth, int screenHeight, int fps, int cpu, float frameTime, int mouseX, int mouseY) {
@@ -382,9 +398,15 @@ bool GraphicsClass::Frame(int screenWidth, int screenHeight, int fps, int cpu, f
 bool GraphicsClass::Render(float rotation) {
 	D3DXMATRIX viewMatrix, projectionMatrix, worldMatrix, translateMatrix, orthoMatrix; 
 	bool result;
+	float fogColor, fogStart, fogEnd;
+
+	fogColor = 0.5f;
+
+	fogStart = 0.0f;
+	fogEnd = 25.0f;
 
 	//Clear the buffers to begin the scene.
-	m_D3D->BeginScene(0.5f, 0.5f, 0.5f, 1.0f); //m_D3D->BeginScene(0.5f, 0.5f, 0.5f, 1.0f); Tutorial1-3-1 //HW2 - 3
+	m_D3D->BeginScene(fogColor, fogColor, fogColor, 1.0f); //m_D3D->BeginScene(0.5f, 0.5f, 0.5f, 1.0f); Tutorial1-3-1 //HW2 - 3
 
 	// Generate the view matrix based on the camera's position.
 	
@@ -448,6 +470,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[1].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[1].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[1].GetTexture(), fogStart, fogEnd + 30);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		result = result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[1].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[1].GetTexture(), m_Light->GetDirection(),
@@ -465,6 +492,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[2].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[2].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[2].GetTexture(), fogStart, fogEnd + 30);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		 result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[2].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[2].GetTexture(), m_Light->GetDirection(),
@@ -483,6 +515,12 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[3].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3	bottom_length_wall
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[3].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[3].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
+
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[3].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[3].GetTexture(), m_Light->GetDirection(),
@@ -499,6 +537,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[4].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3	left_length_wall
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[4].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[4].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[4].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[4].GetTexture(), m_Light->GetDirection(),
@@ -515,6 +558,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[5].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3	//up_length_wall
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[5].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[5].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[5].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[5].GetTexture(), m_Light->GetDirection(),
@@ -531,6 +579,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[6].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3	//right_length_wall
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[6].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[6].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[6].GetIndexCount(), worldMatrix,
@@ -548,6 +601,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[7].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[7].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[7].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[7].GetIndexCount(), worldMatrix,
@@ -565,6 +623,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[8].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[8].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[8].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[8].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[8].GetTexture(), m_Light->GetDirection(),
@@ -581,6 +644,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[9].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[9].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[9].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[9].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[9].GetTexture(), m_Light->GetDirection(),
@@ -597,6 +665,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[10].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[10].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[10].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[10].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[10].GetTexture(), m_Light->GetDirection(),
@@ -613,7 +686,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[11].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
-
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[11].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[11].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[11].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[11].GetTexture(), m_Light->GetDirection(),
@@ -630,6 +707,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[12].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[12].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[12].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[12].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[12].GetTexture(), m_Light->GetDirection(),
@@ -646,6 +728,12 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[22].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[22].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[22].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
+
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[22].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[22].GetTexture(), m_Light->GetDirection(),
@@ -661,6 +749,12 @@ bool GraphicsClass::Render(float rotation) {
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[13].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[13].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[13].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 
 
 		// Render the model using the texture shader.
@@ -679,12 +773,18 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[14].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[14].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[14].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
+
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[14].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[14].GetTexture(), m_Light->GetDirection(),
 			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
 			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
-		if (!result) { return false; }\
+		if (!result) { return false; }
 
 			// Rotate the world matrix by the rotation value so that the triangle will spin.
 			D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
@@ -695,6 +795,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[15].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[15].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[15].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[15].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[15].GetTexture(), m_Light->GetDirection(),
@@ -711,6 +816,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[16].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[16].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[16].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[16].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[16].GetTexture(), m_Light->GetDirection(),
@@ -727,6 +837,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[17].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[17].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[17].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[17].GetIndexCount(), worldMatrix,
@@ -745,6 +860,12 @@ bool GraphicsClass::Render(float rotation) {
 		m_Model[18].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[18].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[18].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
+
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[18].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[18].GetTexture(), m_Light->GetDirection(),
@@ -761,6 +882,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[19].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[19].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[19].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[19].GetIndexCount(), worldMatrix,
@@ -778,7 +904,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[20].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
-
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[20].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[20].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[20].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[20].GetTexture(), m_Light->GetDirection(),
@@ -796,6 +926,11 @@ bool GraphicsClass::Render(float rotation) {
 		m_Model[21].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[21].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[21].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[21].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[21].GetTexture(), m_Light->GetDirection(),
@@ -812,7 +947,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[22].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
-
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[22].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[22].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[22].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[22].GetTexture(), m_Light->GetDirection(),
@@ -829,6 +968,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[23].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[23].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[23].GetTexture(), fogStart, fogEnd);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[23].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[23].GetTexture(), m_Light->GetDirection(),
@@ -844,7 +988,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[24].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
-
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[24].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[24].GetTexture(), fogStart, fogEnd + 30);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[24].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[24].GetTexture(), m_Light->GetDirection(),
@@ -858,6 +1006,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[25].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[25].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[25].GetTexture(), fogStart, fogEnd + 30);
+		if (!result) {
+			return false;
+		}
 
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[25].GetIndexCount(), worldMatrix,
@@ -872,6 +1025,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[26].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[26].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[26].GetTexture(), fogStart, fogEnd + 30);
+		if (!result) {
+			return false;
+		}
 
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[26].GetIndexCount(), worldMatrix,
@@ -886,7 +1044,11 @@ bool GraphicsClass::Render(float rotation) {
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[27].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
-
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[27].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[27].GetTexture(), fogStart, fogEnd + 30);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[27].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[27].GetTexture(), m_Light->GetDirection(),
@@ -901,6 +1063,11 @@ bool GraphicsClass::Render(float rotation) {
 		m_Model[28].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[28].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[28].GetTexture(), fogStart, fogEnd + 30);
+		if (!result) {
+			return false;
+		}
 		// Render the model using the texture shader.
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[28].GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_Model[28].GetTexture(), m_Light->GetDirection(),
@@ -921,6 +1088,12 @@ bool GraphicsClass::Render(float rotation) {
 
 	//D3DXMatrixRotationY(&worldMatrix, rotation);
 	m_plane_Model->Render(m_D3D->GetDeviceContext());
+
+	result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_plane_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_plane_Model->GetTexture(), fogStart, fogEnd);
+	if (!result) {
+		return false;
+	}
 
 	//HW3 - 1
 	//HW2 - 3
