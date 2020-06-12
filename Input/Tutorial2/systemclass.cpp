@@ -229,6 +229,7 @@ bool SystemClass::Frame() {
 		m_Graphics->cameraMove('E');
 	}
 
+
 	// Update the system stats.
 	m_Timer->Frame();
 	m_Fps->Frame();
@@ -237,6 +238,7 @@ bool SystemClass::Frame() {
 	m_Graphics->MouseInput(m_Input->getMouseState());
 	m_Input->GetMouseLocation(mouseX, mouseY);
 
+	
 	// Do the frame processing for the graphics object.
 	result = m_Graphics->Frame(m_Input->getScreenWidth(), m_Input->getScreenHeight(),
 		m_Fps->GetFps(), m_Cpu->GetCpuPercentage(), m_Timer->GetTime(), mouseX, mouseY);

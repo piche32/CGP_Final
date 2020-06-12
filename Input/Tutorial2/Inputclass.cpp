@@ -4,6 +4,8 @@ InputClass::InputClass() {
 	m_directInput = 0;
 	//m_keyboard = 0;
 	m_mouse = 0;
+	m_mouseState = { 0, };
+	
 }
 
 

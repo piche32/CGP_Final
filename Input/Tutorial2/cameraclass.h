@@ -23,11 +23,12 @@ public:
 
 		void Render(); 
 		void GetViewMatrix(D3DXMATRIX&);
-		float m_yaw, m_pitch;
+		
 		D3DXVECTOR3 GetLookAt();
 
 		D3DXVECTOR3 GetRightDirection();
 		D3DXVECTOR3 GetForwardDirection();
+		
 
 
 private:  
@@ -36,6 +37,7 @@ private:
 	D3DXMATRIX m_viewMatrix;
 	D3DXVECTOR3 m_lookAt; //보는 대상
 	D3DXVECTOR3 m_front, m_right, m_pos, m_rot, m_up;
+	float m_yaw, m_pitch, m_roll;
 };
 
 #endif

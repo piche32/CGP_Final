@@ -1163,44 +1163,44 @@ void GraphicsClass::cameraMove(const char key) {
 	if (key == 'W')
 	{
 		
-		/*cameraPos.x += cameraFront.x *speed;
+		cameraPos.x += cameraFront.x *speed;
 		cameraPos.y += cameraFront.y *speed;
 		cameraPos.z += cameraFront.z *speed;
 		cameraLookAt.x += cameraFront.x *speed;
 		cameraLookAt.y += cameraFront.y *speed;
-		cameraLookAt.z += cameraFront.z *speed;*/
-		m_Camera->SetPosition(m_Camera->GetPosition().x, m_Camera->GetPosition().y, m_Camera->GetPosition().z + speed * 1.0f);
+		cameraLookAt.z += cameraFront.z *speed;
+		//m_Camera->SetPosition(m_Camera->GetPosition().x, m_Camera->GetPosition().y, m_Camera->GetPosition().z + speed * 1.0f);
 	}
 	if (key == 'A')
 	{
-		/*cameraPos.x -= cameraRight.x *speed;
+		cameraPos.x -= cameraRight.x *speed;
 		cameraPos.y -= cameraRight.y *speed;
 		cameraPos.z -= cameraRight.z *speed;
 		cameraLookAt.x -= cameraRight.x *speed;
 		cameraLookAt.y -= cameraRight.y *speed;
-		cameraLookAt.z -= cameraRight.z *speed;*/
-		m_Camera->SetPosition(m_Camera->GetPosition().x + speed * -1.0f, m_Camera->GetPosition().y, m_Camera->GetPosition().z);
+		cameraLookAt.z -= cameraRight.z *speed;
+		//m_Camera->SetPosition(m_Camera->GetPosition().x + speed * -1.0f, m_Camera->GetPosition().y, m_Camera->GetPosition().z);
 	}
 	if (key == 'S')
 	{
 
-		/*cameraPos.x -= cameraFront.x *speed;
+		cameraPos.x -= cameraFront.x *speed;
 		cameraPos.y -= cameraFront.y *speed;
 		cameraPos.z -= cameraFront.z *speed;
 		cameraLookAt.x -= cameraFront.x *speed;
 		cameraLookAt.y -= cameraFront.y *speed;
-		cameraLookAt.z -= cameraFront.z *speed;*/
-		m_Camera->SetPosition(m_Camera->GetPosition().x, m_Camera->GetPosition().y, m_Camera->GetPosition().z + speed * -1.0f);
+		cameraLookAt.z -= cameraFront.z *speed;
+		//m_Camera->SetPosition(m_Camera->GetPosition().x, m_Camera->GetPosition().y, m_Camera->GetPosition().z + speed * -1.0f);
 	}
 	if (key == 'D')
 	{
-		/*cameraPos.x += cameraRight.x *speed;
+		cameraPos.x += cameraRight.x *speed;
 		cameraPos.y += cameraRight.y *speed;
 		cameraPos.z += cameraRight.z *speed;
 		cameraLookAt.x += cameraRight.x *speed;
 		cameraLookAt.y += cameraRight.y *speed;
-		cameraLookAt.z += cameraRight.z *speed;*/
-		m_Camera->SetPosition(m_Camera->GetPosition().x + speed * 1.0f, m_Camera->GetPosition().y, m_Camera->GetPosition().z);
+		cameraLookAt.z += cameraRight.z *speed;
+		//m_Camera->SetPosition(m_Camera->GetPosition().x + speed * 1.0f, m_Camera->GetPosition().y, m_Camera->GetPosition().z);
 	}
 	if (key == 'Q')
 	{
@@ -1210,9 +1210,12 @@ void GraphicsClass::cameraMove(const char key) {
 	{
 		m_Camera->SetPosition(m_Camera->GetPosition().x , m_Camera->GetPosition().y + speed * -1.0f, m_Camera->GetPosition().z);
 	}
+	//D3DXVec3Normalize(&cameraLookAt, &cameraLookAt);
 
-	//m_Camera->SetPosition(cameraPos.x, cameraPos.y, cameraPos.z );
-	//m_Camera->SetLookAt(cameraLookAt);
+	m_Camera->SetPosition(cameraPos.x, cameraPos.y, cameraPos.z );
+	m_Camera->SetLookAt(cameraLookAt);
+	//m_Camera->GetForwardDirection();
+	//m_Camera->GetRightDirection();
 }
 
 //HW3 - 3
@@ -1233,7 +1236,9 @@ void GraphicsClass::MouseInput(const DIMOUSESTATE mouseState) {
 	const float moveValue = 0.3f;
 	const float value = 50.0f;
 	D3DXVECTOR3 lookat = m_Camera->GetLookAt();
+	m_Camera->GetForwardDirection();
 	D3DXVECTOR3 cameraRight = m_Camera->GetRightDirection();
+
 	if (mouseState.lX > 0) {
 		lookat.x += cameraRight.x * moveValue;
 		lookat.z += cameraRight.z * moveValue;
@@ -1248,9 +1253,9 @@ void GraphicsClass::MouseInput(const DIMOUSESTATE mouseState) {
 	else if (mouseState.lY < 0) {
 		lookat.y += moveValue;
 	}
-	D3DXVec3Normalize(&lookat, &lookat);
-	lookat.x = lookat.x*value;
+	//D3DXVec3Normalize(&lookat, &lookat);
+	/*lookat.x = lookat.x*value;
 	lookat.y = lookat.y*value;
-	lookat.z = lookat.z*value;
+	lookat.z = lookat.z*value;*/
 	m_Camera->SetLookAt(lookat);
 }

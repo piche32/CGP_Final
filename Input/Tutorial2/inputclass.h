@@ -35,7 +35,7 @@ private:
 	IDirectInputDevice8* m_mouse = nullptr;
 
 	//unsigned char m_keyboardState[256] = { 0, };
-	DIMOUSESTATE m_mouseState, mouseLastState;
+	DIMOUSESTATE m_mouseState;
 
 	int m_screenWidth, m_screenHeight;
 	int m_mouseX, m_mouseY;
