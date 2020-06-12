@@ -1,44 +1,57 @@
 #include "cameraclass.h"
 
 CameraClass::CameraClass() {
-	m_positionX = 0.0f; 
-	m_positionY = 0.0f; 
-	m_positionZ = 0.0f;
-
-	m_rotationX = 0.0f;  
-	m_rotationY = 0.0f; 
-	m_rotationZ = 0.0f;
-
+	
 	m_lookAt.x = 0.0f;
 	m_lookAt.y = 0.0f;
 	m_lookAt.z = 1.0f;
 
+	m_pos = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
+	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
 	m_right = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
 	m_front = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
+	m_up = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+
+	m_yaw = m_rot.y * 0.0174532925f;
+	m_pitch = m_rot.x * 0.0174532925f;
+
 }
 
 CameraClass::CameraClass(const CameraClass& other) { }
 CameraClass::~CameraClass() { }
 void CameraClass::SetPosition(float x, float y, float z) {
-	m_positionX = x; 
-	m_positionY = y; 
-	m_positionZ = z;
+	m_pos.x = x; 
+	m_pos.y = y;
+	m_pos.z = z;
+
 	return; 
 }
 
+void CameraClass::SetPosition(D3DXVECTOR3 pos) {
+	m_pos = pos;
+	return;
+}
+
 void CameraClass::SetRotation(float x, float y, float z) { 
-	m_rotationX = x; 
-	m_rotationY = y; 
-	m_rotationZ = z;
+	m_rot.x = x;
+	m_rot.y = y;
+	m_rot.z = z;
+
+	return;
+}
+
+void CameraClass::SetRotation(D3DXVECTOR3 rot) {
+	m_rot = rot;
 	return;
 }
 
 D3DXVECTOR3 CameraClass::GetPosition() {
-	return D3DXVECTOR3(m_positionX, m_positionY, m_positionZ);
+	return m_pos;
 }
 
 D3DXVECTOR3 CameraClass::GetRotation() { 
-	return D3DXVECTOR3(m_rotationX, m_rotationY, m_rotationZ);
+	return m_rot;
 }
 
 void CameraClass::Render() {
@@ -47,25 +60,22 @@ void CameraClass::Render() {
 	D3DXMATRIX rotationMatrix;
 
 	// Setup the vector that points upwards.
-	up.x = 0.0f; 
-	up.y = 1.0f; 
-	up.z = 0.0f; 
-
+	up = m_up;
 	// Setup the position of the camera in the world. 
-	position.x = m_positionX; 
-	position.y = m_positionY;
-	position.z = m_positionZ;
+	position = m_pos;
 
-	D3DXVec3Normalize(&lookAt, &m_lookAt);
+	lookAt = m_lookAt; //밑에 주석해제하면 이거 잠그기
+	//D3DXVec3Normalize(&lookAt, &m_lookAt); //이상하면 이거 풀기
 	// Setup where the camera is looking by default.
 	/*lookAt.x = m_lookAt.x; 
 	lookAt.y = m_lookAt.y;
 	lookAt.z = m_lookAt.z;*/
 
+	
 	// Set the yaw (Y axis), pitch (X axis), and roll (Z axis) rotations in radians. 
-	pitch = m_rotationX * 0.0174532925f; 
-	yaw   = m_rotationY * 0.0174532925f; 
-	roll  = m_rotationZ * 0.0174532925f; 
+	pitch = m_pitch;//m_rot.x * 0.0174532925f; 
+	yaw = m_yaw;//m_rot.y * 0.0174532925f; 
+	roll  = m_rot.z * 0.0174532925f;
 
 	// Create the rotation matrix from the yaw, pitch, and roll values. 
 	D3DXMatrixRotationYawPitchRoll(&rotationMatrix, yaw, pitch, roll); 
