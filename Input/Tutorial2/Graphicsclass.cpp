@@ -21,6 +21,10 @@ GraphicsClass::GraphicsClass() {
 
 	m_ModelVertex = 0;
 	m_player = 0;
+
+	move = 100.0f;
+	speed10 = 1.0f;
+	cnt = 0;
 }
 
 GraphicsClass::GraphicsClass(const GraphicsClass& other) { }
@@ -408,6 +412,9 @@ bool GraphicsClass::Frame(int screenWidth, int screenHeight, int fps, int cpu, f
 	result = m_Text->SetMousePosition(mouseX, mouseY, m_D3D->GetDeviceContext());
 	if (!result) return false;
 
+	result = m_Text->SetScreen(screenWidth, screenHeight, m_D3D->GetDeviceContext());
+	if (!result) return false;
+
 	m_Camera->SetPosition(m_player->GetPos() + m_Camera->GetTargetDist()); //m_Camera->SetPosition(0.0f, 0.0f, -10.0f); tutorial2 - 1 수정 HW2 - 4
 	m_Camera->SetLookAt(m_player->GetPos() + D3DXVECTOR3(0.0f, 10.0f, 0.0f));
 
@@ -493,16 +500,23 @@ bool GraphicsClass::Render(float rotation) {
 		m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 	if (!result) { return false; }
 
-	
-	D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+	//버섯장애물
+	D3DXMatrixRotationY(&worldMatrix, -90.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
 	SetScale(&worldMatrix, &translateMatrix, &D3DXVECTOR3(1.0f, 1.0f, 1.0f));
-	SetPos(&worldMatrix, &translateMatrix, &D3DXVECTOR3(-20.0f, 0.0f, 110.f));
-	//D3DXMatrixScaling(&translateMatrix, 0.1f, 0.1f, 0.1f);
-//	D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
-	//	D3DXMatrixTranslation(&translateMatrix, -20.0f, 0.0f, 110.0f);
-		//D3DXMatrixTranslation(&translateMatrix, (m_Camera->GetPosition().x+m_Camera->GetLookAt().x), (m_Camera->GetPosition().y + m_Camera->GetLookAt().y), (m_Camera->GetPosition().z + m_Camera->GetLookAt().z));  //카메라 lookAt에 있기
+	//SetPos(&worldMatrix, &translateMatrix, &D3DXVECTOR3(-20.0f, 0.0f, 110.f));
+	if (cnt == 15) {
+		if (move <95.0f || move >115.0f) {
+			speed10 = speed10 * (-1);
+		}
+		move += speed10;
+		cnt = 0;
+	}
+	cnt++;
 
-	//	D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+	D3DXMatrixTranslation(&translateMatrix, -20.0f, 0.0f, move);
+
+	D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+	
 	  // Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[0].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 

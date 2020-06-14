@@ -85,7 +85,9 @@ public:
 	void SetCameraView();
 	bool GetCameraView();
 
-
+	float move;	//장애물 움직이는 값
+	float speed10;	//더하고 빼주는 값
+	int cnt;	//fps 조절
 };
 
 #endif

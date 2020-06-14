@@ -231,7 +231,6 @@ bool SystemClass::Frame() {
 			m_Graphics->cameraMove('E');
 		}
 
-		m_Graphics->MouseInput(m_Input->getMouseState());
 	}
 	
 	else{
@@ -249,6 +248,8 @@ bool SystemClass::Frame() {
 	}
 	}
 
+
+	m_Graphics->MouseInput(m_Input->getMouseState());
 
 	// Update the system stats.
 	m_Timer->Frame();

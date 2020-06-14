@@ -6,7 +6,7 @@ TextClass::TextClass() {
 	m_FontShader = 0;
 
 	m_sentence = 0;
-	maxSentence = 8;
+	maxSentence = 10;
 }
 
 TextClass::TextClass(const TextClass& other)
@@ -542,6 +542,40 @@ bool TextClass::SetPlayerInfo(D3DXVECTOR3 pos, ID3D11DeviceContext* deviceContex
 
 	// Update the sentence vertex buffer with the new string information.
 	result = UpdateSentence(m_sentence[7], curstring, 20, 160, 1.0f, 1.0f, 1.0f, deviceContext);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool TextClass::SetScreen(int screenWidth, int screenHeight, ID3D11DeviceContext* deviceContext) {
+	char tempString[100];
+	char screenString[100];
+	bool result;
+
+	_itoa_s(screenWidth, tempString, 10);
+
+	strcpy_s(screenString, "screenWidth: ");
+	strcat_s(screenString, tempString);
+
+	// Update the sentence vertex buffer with the new string information.
+	result = UpdateSentence(m_sentence[7], screenString, 20, 160, 1.0f, 1.0f, 1.0f, deviceContext);
+	if (!result)
+	{
+		return false;
+	}
+
+	//Convert the mouseY integer to string format.
+	_itoa_s(screenHeight, tempString, 10);
+
+	// Setup the mouseY string.
+	strcpy_s(screenString, "screenHeight: ");
+	strcat_s(screenString, tempString);
+
+	// Update the sentence vertex buffer with the new string information.
+	result = UpdateSentence(m_sentence[8], screenString, 20, 180, 1.0f, 1.0f, 1.0f, deviceContext);
 	if (!result)
 	{
 		return false;
