@@ -6,7 +6,7 @@ TextClass::TextClass() {
 	m_FontShader = 0;
 
 	m_sentence = 0;
-	maxSentence = 7;
+	maxSentence = 8;
 }
 
 TextClass::TextClass(const TextClass& other)
@@ -136,34 +136,6 @@ bool TextClass::Render(ID3D11DeviceContext* deviceContext, D3DXMATRIX worldMatri
 			return false;
 		}
 	}
-	/*result = RenderSentence(deviceContext, m_sentence1, worldMatrix, orthoMatrix);
-	if (!result)
-	{
-		return false;
-	}
-	// Draw the second sentence.
-	result = RenderSentence(deviceContext, m_sentence2, worldMatrix, orthoMatrix);
-	if (!result)
-	{
-		return false;
-	}
-
-	result = RenderSentence(deviceContext, m_sentence3, worldMatrix, orthoMatrix);
-	if (!result)
-	{
-		return false;
-	}
-	result = RenderSentence(deviceContext, m_sentence4, worldMatrix, orthoMatrix);
-	if (!result)
-	{
-		return false;
-	}
-
-	result = RenderSentence(deviceContext, m_sentence5, worldMatrix, orthoMatrix);
-	if (!result)
-	{
-		return false;
-	}*/
 	return true;
 }
 
@@ -539,6 +511,37 @@ bool TextClass::SetCameraInfo(D3DXVECTOR3 pos, D3DXVECTOR3 lookAt, ID3D11DeviceC
 
 	// Update the sentence vertex buffer with the new string information.
 	result = UpdateSentence(m_sentence[6], cameraString, 20, 140, 1.0f, 1.0f, 1.0f, deviceContext);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool TextClass::SetPlayerInfo(D3DXVECTOR3 pos, ID3D11DeviceContext* deviceContext) {
+	char tempString[25];
+	char curstring[25];
+	bool result;
+
+
+	// Convert the mouseX integer to string format.
+	_itoa_s(pos.x, tempString, 10);
+
+	// Setup the mouseX string.
+	strcpy_s(curstring, "player (");
+	strcat_s(curstring, tempString);
+
+	strcat_s(curstring, ", ");
+	_itoa_s(pos.y, tempString, 10);
+	strcat_s(curstring, tempString);
+	_itoa_s(pos.z, tempString, 10);
+	strcat_s(curstring, ", ");
+	strcat_s(curstring, tempString);
+	strcat_s(curstring, ")");
+
+	// Update the sentence vertex buffer with the new string information.
+	result = UpdateSentence(m_sentence[7], curstring, 20, 160, 1.0f, 1.0f, 1.0f, deviceContext);
 	if (!result)
 	{
 		return false;

@@ -201,32 +201,52 @@ bool SystemClass::Frame() {
 	// Get the location of the mouse from the input object,
 
 	
-	if(m_Input->IsKeyDown('1'))
-		changelight(1);
-	if (m_Input->IsKeyDown('2'))
+	if (m_Input->IsKeyDown('1'))
+		m_Graphics->SetCameraView();
+		//changelight(1);
+	/*if (m_Input->IsKeyDown('2'))
 		changelight(2);
 	if (m_Input->IsKeyDown('3'))
-		changelight(3);
+		changelight(3);*/
 
+	if (m_Graphics->GetCameraView()) {
+		if (m_Input->IsKeyDown('W')) {
+			m_Graphics->cameraMove('W');
+		}
+		if (m_Input->IsKeyDown(('A'))) {
+			m_Graphics->cameraMove('A');
+		}
+
+		if (m_Input->IsKeyDown(('S'))) {
+			m_Graphics->cameraMove('S');
+
+		}
+		if (m_Input->IsKeyDown(('D'))) {
+			m_Graphics->cameraMove('D');
+		}
+		if (m_Input->IsKeyDown(('Q'))) {
+			m_Graphics->cameraMove('Q');
+		}
+		if (m_Input->IsKeyDown(('E'))) {
+			m_Graphics->cameraMove('E');
+		}
+
+		m_Graphics->MouseInput(m_Input->getMouseState());
+	}
+	
+	else{
 	if (m_Input->IsKeyDown('W')) {
-		m_Graphics->cameraMove('W');
+		m_Graphics->playerMove('W');
 	}
 	if (m_Input->IsKeyDown(('A'))) {
-		m_Graphics->cameraMove('A');
-
+		m_Graphics->playerMove('A');
 	}
 	if (m_Input->IsKeyDown(('S'))) {
-		m_Graphics->cameraMove('S');
-
+		m_Graphics->playerMove('S');
 	}
 	if (m_Input->IsKeyDown(('D'))) {
-		m_Graphics->cameraMove('D');
+		m_Graphics->playerMove('D');
 	}
-	if (m_Input->IsKeyDown(('Q'))) {
-		m_Graphics->cameraMove('Q');
-	}
-	if (m_Input->IsKeyDown(('E'))) {
-		m_Graphics->cameraMove('E');
 	}
 
 
@@ -235,7 +255,6 @@ bool SystemClass::Frame() {
 	m_Fps->Frame();
 	m_Cpu->Frame();
 
-	m_Graphics->MouseInput(m_Input->getMouseState());
 	m_Input->GetMouseLocation(mouseX, mouseY);
 
 	
