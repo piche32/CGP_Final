@@ -20,6 +20,7 @@ GraphicsClass::GraphicsClass() {
 	m_ModelMax = 3 + m_WallNum + m_StarNum ;
 
 	m_ModelVertex = 0;
+	m_player = 0;
 }
 
 GraphicsClass::GraphicsClass(const GraphicsClass& other) { }
@@ -81,13 +82,27 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Camera->Render();
 	m_Camera->GetViewMatrix(baseViewMatrix);
  // Set the initial position of the camera.
-	m_Camera->SetPosition(0.0f, 40.0f, -100.0f); //m_Camera->SetPosition(0.0f, 0.0f, -10.0f); tutorial2 - 1 수정 HW2 - 4
+	m_Camera->SetPosition(10.0f, 10.0f, 10.0f); //m_Camera->SetPosition(0.0f, 0.0f, -10.0f); tutorial2 - 1 수정 HW2 - 4
 	m_Camera->SetLookAt(D3DXVECTOR3(0.0f, 0.0f, 1.0f));
 	
 
 	m_baseViewMatrix = baseViewMatrix;
 
 	// Create the model object.
+	m_player = new PlayerClass;
+	if (!m_player) { return false; }
+
+	result = m_player->Initialize(m_D3D->GetDevice(), (char*)"../Tutorial2/data/warppipe.obj",
+		(WCHAR*)L"../Tutorial2/data/warppipe.dds", hwnd);
+	if (!result) {
+		MessageBox(hwnd, L"Could not initialize the player object.", L"Error", MB_OK);
+		return false;
+	}
+
+	m_player->SetPos(D3DXVECTOR3(10.0f, 0.0f, 110.f));
+	m_player->SetScale(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+
+
 	m_Model = new ModelClass[m_ModelMax]; 
 	if(!m_Model)  {   return false;  } 
 
@@ -97,12 +112,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
   // Initialize the model object. 
-	/*result = m_Model[0].Initialize(m_D3D->GetDevice(),
-		(char*)"../Tutorial2/data/goomba.obj", (WCHAR*)L"../Tutorial2/data/goomba.dds"); //error 시 여기 확인
-	if(!result)  {  
-		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK); 
-		return false;
-	}*/
+	
 	// Initialize the model object. 
 	result = m_Model[0].Initialize(m_D3D->GetDevice(),
 		(char*)"../Tutorial2/data/goomba.obj", (WCHAR*)L"../Tutorial2/data/goomba.dds"); //error 시 여기 확인
@@ -244,13 +254,13 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown() {
 
-	
+
 	if (m_D3D) {
 		m_D3D->Shutdown();
 		delete m_D3D;
 		m_D3D = 0;
 	}
-	
+
 	//// Release the color shader object.
 	//if(m_ColorShader)  { 
 	//	m_ColorShader->Shutdown();
@@ -264,7 +274,7 @@ void GraphicsClass::Shutdown() {
 		m_TextureShader->Shutdown();
 		delete m_TextureShader;
 		m_TextureShader = 0;
-	}*/ 
+	}*/
 
 	// Release the light object.
 	if (m_Light)
@@ -285,8 +295,8 @@ void GraphicsClass::Shutdown() {
 	for (int i = 0; i < m_ModelMax; i++) {
 		m_Model[i].Shutdown();
 	}
-		delete[] m_Model;
-		m_Model = 0;
+	delete[] m_Model;
+	m_Model = 0;
 
 
 
@@ -296,11 +306,17 @@ void GraphicsClass::Shutdown() {
 		m_Model = 0; 
 	} */
 
+	if (m_player) {
+		m_player->Shutdown();
+		delete m_player;
+		m_player = 0;
+	}
+
 	//HW2 - 3
 	if (m_plane_Model){
 		m_plane_Model->Shutdown();
 		delete m_plane_Model;
-		m_plane_Model;
+		m_plane_Model = 0;
 		}
 
   // Release the camera object.
@@ -441,13 +457,41 @@ bool GraphicsClass::Render(float rotation) {
 
 		// Rotate the world matrix by the rotation value so that the triangle will spin.
 
-		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
-		D3DXMatrixScaling(&translateMatrix, 0.1f, 0.1f, 0.1f);
-		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
-		D3DXMatrixTranslation(&translateMatrix, -20.0f, 0.0f, 110.0f);
+	//m_D3D->GetWorldMatrix(worldMatrix);
+
+	SetScale(&worldMatrix, &translateMatrix, &m_player->GetScale());
+	SetPos(&worldMatrix, &translateMatrix, &m_player->GetPos());
+
+	//SetScale(&worldMatrix, &translateMatrix, &D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+	//SetPos(&worldMatrix, &translateMatrix, &D3DXVECTOR3(-20.0f, 0.0f, 11.0f));
+
+
+	/*result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_player->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_player->GetModel()->GetTexture(), fogStart, fogEnd);
+	if (!result) {
+		return false;
+	}*/
+
+	m_player->GetModel()->Render(m_D3D->GetDeviceContext());
+
+	//HW3 - 1
+	//HW2 - 3
+	result = result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_player->GetModel()->GetIndexCount(), worldMatrix,
+		viewMatrix, projectionMatrix, m_player->GetModel()->GetTexture(), m_Light->GetDirection(),
+		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+		m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+	if (!result) { return false; }
+
+	
+	D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+	SetScale(&worldMatrix, &translateMatrix, &D3DXVECTOR3(0.1f, 0.1f, 0.1f));
+	SetPos(&worldMatrix, &translateMatrix, &D3DXVECTOR3(-20.0f, 0.0f, 110.f));
+	//D3DXMatrixScaling(&translateMatrix, 0.1f, 0.1f, 0.1f);
+//	D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+	//	D3DXMatrixTranslation(&translateMatrix, -20.0f, 0.0f, 110.0f);
 		//D3DXMatrixTranslation(&translateMatrix, (m_Camera->GetPosition().x+m_Camera->GetLookAt().x), (m_Camera->GetPosition().y + m_Camera->GetLookAt().y), (m_Camera->GetPosition().z + m_Camera->GetLookAt().z));  //카메라 lookAt에 있기
 
-		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+	//	D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 	  // Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
 		m_Model[0].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
@@ -1078,6 +1122,8 @@ bool GraphicsClass::Render(float rotation) {
 	//HW2 - 3
 	//HW3 - 1
 
+	
+
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
@@ -1228,6 +1274,7 @@ int GraphicsClass::countPolygons() {
 
 
 	m_ModelIndex += m_plane_Model->GetIndexCount();
+	m_ModelIndex += m_player->GetModel()->GetIndexCount();
 
 	return (m_ModelIndex / 3);
 }
@@ -1258,4 +1305,16 @@ void GraphicsClass::MouseInput(const DIMOUSESTATE mouseState) {
 	lookat.y = lookat.y*value;
 	lookat.z = lookat.z*value;*/
 	m_Camera->SetLookAt(lookat);
+}
+
+
+void GraphicsClass::SetPos(D3DXMATRIX* worldMatrix, D3DXMATRIX* translateMatrix, D3DXVECTOR3* pos) {
+	D3DXMatrixTranslation(translateMatrix, pos->x, pos->y, pos->z);
+	D3DXMatrixMultiply(worldMatrix, worldMatrix, translateMatrix);
+	return;
+}
+void GraphicsClass::SetScale(D3DXMATRIX* worldMatrix, D3DXMATRIX* translateMatrix, D3DXVECTOR3* scale) {
+	D3DXMatrixScaling(translateMatrix, scale->x, scale->y, scale->z);
+	D3DXMatrixMultiply(worldMatrix, worldMatrix, translateMatrix);
+	return;
 }

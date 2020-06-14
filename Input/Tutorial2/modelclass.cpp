@@ -508,7 +508,6 @@ void ModelClass::ShutdownBuffers() {
 		m_vertexBuffer->Release(); 
 		m_vertexBuffer = 0; 
 	} 
-
 	return;
 }
 

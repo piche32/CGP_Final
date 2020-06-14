@@ -14,6 +14,8 @@
 #include "bitmapclass.h"
 #include "textclass.h"
 #include "Fogshaderclass.h"
+#include "playerClass.h"
+#include "GameObject.h"
 
 #include <dinput.h>
 #pragma comment(lib, "dinput8.lib")
@@ -54,6 +56,8 @@ private:
 
 	FogShaderClass* m_FogShader;
 
+	GameObjectClass* m_player;
+
 	//HW2 - 4
 public:
 	//TextureShaderClass* getTextureShader();
@@ -74,6 +78,8 @@ public:
 	//HW3 - 3
 	int countPolygons();
 
+	void SetPos(D3DXMATRIX*, D3DXMATRIX*, D3DXVECTOR3*);
+	void SetScale(D3DXMATRIX*, D3DXMATRIX*, D3DXVECTOR3*);
 };
 
 #endif
