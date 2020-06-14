@@ -24,7 +24,6 @@ public:
 
 	void SetModel(ModelClass*);
 	void SetPos(D3DXVECTOR3);
-	void SetPos(float, float, float);
 	void SetScale(D3DXVECTOR3);
 	void SetRot(D3DXVECTOR3);
 

@@ -82,7 +82,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Camera->Render();
 	m_Camera->GetViewMatrix(baseViewMatrix);
  // Set the initial position of the camera.
-	
+	m_Camera->SetPosition(10.0f, 10.0f, 10.0f); //m_Camera->SetPosition(0.0f, 0.0f, -10.0f); tutorial2 - 1 ¼öÁ¤ HW2 - 4
+	m_Camera->SetLookAt(D3DXVECTOR3(0.0f, 0.0f, 1.0f));
 	
 
 	m_baseViewMatrix = baseViewMatrix;
@@ -91,22 +92,15 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_player = new PlayerClass;
 	if (!m_player) { return false; }
 
-	result = m_player->Initialize(m_D3D->GetDevice(), (char*)"../Tutorial2/data/goomba.obj",
-		(WCHAR*)L"../Tutorial2/data/goomba.dds", hwnd);
+	result = m_player->Initialize(m_D3D->GetDevice(), (char*)"../Tutorial2/data/warppipe.obj",
+		(WCHAR*)L"../Tutorial2/data/warppipe.dds", hwnd);
 	if (!result) {
 		MessageBox(hwnd, L"Could not initialize the player object.", L"Error", MB_OK);
 		return false;
 	}
 
-	m_player->SetPos(-35.0f, 0.0f, 217.0f);
-	m_player->SetScale(D3DXVECTOR3(0.1f, 0.1f, 0.1f));
-
-	D3DXVECTOR3 targetDist;
-	D3DXVec3Normalize(&targetDist, &((PlayerClass*)m_player)->GetLookAt());
-	targetDist = 50.0f*targetDist + D3DXVECTOR3(0.0f, 10.0f, 0.0f);
-	m_Camera->SetTargetDist(targetDist);
-	m_Camera->SetPosition(m_player->GetPos() + m_Camera->GetTargetDist()); //m_Camera->SetPosition(0.0f, 0.0f, -10.0f); tutorial2 - 1 ¼öÁ¤ HW2 - 4
-	m_Camera->SetLookAt(m_player->GetPos() + D3DXVECTOR3(0.0f, 10.0f, 0.0f));
+	m_player->SetPos(D3DXVECTOR3(10.0f, 0.0f, 110.f));
+	m_player->SetScale(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 
 
 	m_Model = new ModelClass[m_ModelMax]; 
@@ -119,9 +113,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
   // Initialize the model object. 
 	
-	// Initialize the model object.
+	// Initialize the model object. 
 	result = m_Model[0].Initialize(m_D3D->GetDevice(),
-		(char*)"../Tutorial2/data/warppipe.obj", (WCHAR*)L"../Tutorial2/data/warppipe.dds"); //error ½Ã ¿©±â È®ÀÎ
+		(char*)"../Tutorial2/data/goomba.obj", (WCHAR*)L"../Tutorial2/data/goomba.dds"); //error ½Ã ¿©±â È®ÀÎ
 	if (!result) {
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
@@ -398,20 +392,20 @@ bool GraphicsClass::Frame(int screenWidth, int screenHeight, int fps, int cpu, f
 		return false;
 	}
 
-	result = m_Text->SetPlayerInfo(m_player->GetPos(), m_D3D->GetDeviceContext());
-	if (!result)
-	{
-		return false;
-	}
-
 	//Set the location of the mouse.
 	result = m_Text->SetMousePosition(mouseX, mouseY, m_D3D->GetDeviceContext());
 	if (!result) return false;
 
+<<<<<<< HEAD
 	if (!m_Camera->GetIsFPS()) {
 		m_Camera->SetPosition(m_player->GetPos() + m_Camera->GetTargetDist()); //m_Camera->SetPosition(0.0f, 0.0f, -10.0f); tutorial2 - 1 ¼öÁ¤ HW2 - 4
 		m_Camera->SetLookAt(m_player->GetPos() + D3DXVECTOR3(0.0f, 10.0f, 0.0f));
 	}
+=======
+	/*D3DXMATRIX projectionMatrix, worldMatrix;
+	m_D3D->GetProjectionMatrix(projectionMatrix);
+	m_D3D->GetWorldMatrix(worldMatrix);*/
+>>>>>>> parent of 270960a... 3ì¸ì¹­ ì¹´ë©”ë¼
 
 	//Render the graphics scene.
 	result = Render(rotation);
@@ -497,7 +491,7 @@ bool GraphicsClass::Render(float rotation) {
 
 	
 	D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
-	SetScale(&worldMatrix, &translateMatrix, &D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+	SetScale(&worldMatrix, &translateMatrix, &D3DXVECTOR3(0.1f, 0.1f, 0.1f));
 	SetPos(&worldMatrix, &translateMatrix, &D3DXVECTOR3(-20.0f, 0.0f, 110.f));
 	//D3DXMatrixScaling(&translateMatrix, 0.1f, 0.1f, 0.1f);
 //	D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
@@ -1213,78 +1207,22 @@ void GraphicsClass::changeLight(const int input) {
 	}
 }
 
-void GraphicsClass::playerMove(const char key) {
-	D3DXVECTOR3 targetPos;
-	D3DXVECTOR3 targetLookAt;
-	D3DXVECTOR3 targetFront;
-	D3DXVECTOR3 targetRight;
-	PlayerClass* player = (PlayerClass*)m_player;
-	if (player == nullptr) {
-		if (m_Camera->GetIsFPS() == false) m_Camera->SetFPS();
-		return;
-	}
-	else {
-		targetPos = player->GetPos();
-		targetLookAt = player->GetLookAt();
-		targetFront = player->GetFront();
-		targetRight = player->GetRight();
-	}
-	float speed = 0.1f;
-	if (key == 'W')
-	{
-		targetPos.x += targetFront.x *speed;
-		targetPos.y += targetFront.y *speed;
-		targetPos.z += targetFront.z *speed;
-		targetLookAt.x += targetFront.x *speed;
-		targetLookAt.y += targetFront.y *speed;
-		targetLookAt.z += targetFront.z *speed;
-	}
-	if (key == 'A')
-	{
-		targetPos.x -= targetRight.x *speed;	
-		targetPos.y -= targetRight.y *speed;
-		targetPos.z -= targetRight.z *speed;
-		targetLookAt.x -= targetRight.x *speed;
-		targetLookAt.y -= targetRight.y *speed;
-		targetLookAt.z -= targetRight.z *speed;
-	}
-	if (key == 'S')
-	{
-		targetPos.x -= targetFront.x *speed;
-		targetPos.y -= targetFront.y *speed;
-		targetPos.z -= targetFront.z *speed;
-		targetLookAt.x -= targetFront.x *speed;
-		targetLookAt.y -= targetFront.y *speed;
-		targetLookAt.z -= targetFront.z *speed;
-	}
-	if (key == 'D')
-	{
-		targetPos.x += targetRight.x *speed;
-		targetPos.y += targetRight.y *speed;
-		targetPos.z += targetRight.z *speed;
-		targetLookAt.x += targetRight.x *speed;
-		targetLookAt.y += targetRight.y *speed;
-		targetLookAt.z += targetRight.z *speed;
-	}
-	player->SetPos(targetPos);	
-	player->SetLookAt(targetLookAt);
-}
-
 void GraphicsClass::cameraMove(const char key) {
 	D3DXVECTOR3 cameraPos = m_Camera->GetPosition();
 	D3DXVECTOR3 cameraLookAt = m_Camera->GetLookAt();
 	D3DXVECTOR3 cameraFront = m_Camera->GetForwardDirection();
 	D3DXVECTOR3 cameraRight = m_Camera->GetRightDirection();
-
 	float speed = 0.1f;
 	if (key == 'W')
 	{
+		
 		cameraPos.x += cameraFront.x *speed;
 		cameraPos.y += cameraFront.y *speed;
 		cameraPos.z += cameraFront.z *speed;
 		cameraLookAt.x += cameraFront.x *speed;
 		cameraLookAt.y += cameraFront.y *speed;
 		cameraLookAt.z += cameraFront.z *speed;
+		//m_Camera->SetPosition(m_Camera->GetPosition().x, m_Camera->GetPosition().y, m_Camera->GetPosition().z + speed * 1.0f);
 	}
 	if (key == 'A')
 	{
@@ -1294,16 +1232,18 @@ void GraphicsClass::cameraMove(const char key) {
 		cameraLookAt.x -= cameraRight.x *speed;
 		cameraLookAt.y -= cameraRight.y *speed;
 		cameraLookAt.z -= cameraRight.z *speed;
-
+		//m_Camera->SetPosition(m_Camera->GetPosition().x + speed * -1.0f, m_Camera->GetPosition().y, m_Camera->GetPosition().z);
 	}
 	if (key == 'S')
 	{
+
 		cameraPos.x -= cameraFront.x *speed;
 		cameraPos.y -= cameraFront.y *speed;
 		cameraPos.z -= cameraFront.z *speed;
 		cameraLookAt.x -= cameraFront.x *speed;
 		cameraLookAt.y -= cameraFront.y *speed;
 		cameraLookAt.z -= cameraFront.z *speed;
+		//m_Camera->SetPosition(m_Camera->GetPosition().x, m_Camera->GetPosition().y, m_Camera->GetPosition().z + speed * -1.0f);
 	}
 	if (key == 'D')
 	{
@@ -1313,12 +1253,23 @@ void GraphicsClass::cameraMove(const char key) {
 		cameraLookAt.x += cameraRight.x *speed;
 		cameraLookAt.y += cameraRight.y *speed;
 		cameraLookAt.z += cameraRight.z *speed;
-
+		//m_Camera->SetPosition(m_Camera->GetPosition().x + speed * 1.0f, m_Camera->GetPosition().y, m_Camera->GetPosition().z);
 	}
-	m_Camera->SetPosition(cameraPos.x, cameraPos.y, cameraPos.z);
-	m_Camera->SetLookAt(cameraLookAt);
-}
+	if (key == 'Q')
+	{
+		m_Camera->SetPosition(m_Camera->GetPosition().x, m_Camera->GetPosition().y + speed * 1.0f, m_Camera->GetPosition().z);
+	}
+	if (key == 'E')
+	{
+		m_Camera->SetPosition(m_Camera->GetPosition().x , m_Camera->GetPosition().y + speed * -1.0f, m_Camera->GetPosition().z);
+	}
+	//D3DXVec3Normalize(&cameraLookAt, &cameraLookAt);
 
+	m_Camera->SetPosition(cameraPos.x, cameraPos.y, cameraPos.z );
+	m_Camera->SetLookAt(cameraLookAt);
+	//m_Camera->GetForwardDirection();
+	//m_Camera->GetRightDirection();
+}
 
 //HW3 - 3
 int GraphicsClass::countPolygons() {
@@ -1356,6 +1307,10 @@ void GraphicsClass::MouseInput(const DIMOUSESTATE mouseState) {
 	else if (mouseState.lY < 0) {
 		lookat.y += moveValue;
 	}
+	//D3DXVec3Normalize(&lookat, &lookat);
+	/*lookat.x = lookat.x*value;
+	lookat.y = lookat.y*value;
+	lookat.z = lookat.z*value;*/
 	m_Camera->SetLookAt(lookat);
 }
 
@@ -1369,13 +1324,4 @@ void GraphicsClass::SetScale(D3DXMATRIX* worldMatrix, D3DXMATRIX* translateMatri
 	D3DXMatrixScaling(translateMatrix, scale->x, scale->y, scale->z);
 	D3DXMatrixMultiply(worldMatrix, worldMatrix, translateMatrix);
 	return;
-}
-
-void GraphicsClass::SetCameraView() {
-	m_Camera->SetFPS();
-	return;
-}
-
-bool GraphicsClass::GetCameraView() {
-	return m_Camera->GetIsFPS();
 }

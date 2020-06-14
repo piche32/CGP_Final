@@ -51,8 +51,6 @@ public:
 	bool SetCpu(int, ID3D11DeviceContext*);
 	bool CountPolygons(const int, ID3D11DeviceContext*);
 	bool SetCameraInfo(D3DXVECTOR3, D3DXVECTOR3, ID3D11DeviceContext*);
-	bool SetPlayerInfo(D3DXVECTOR3, ID3D11DeviceContext*);
-
 
 };
 #endif

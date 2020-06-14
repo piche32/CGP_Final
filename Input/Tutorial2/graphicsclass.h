@@ -72,7 +72,6 @@ public:
 
 	//HW3 - 4
 	void cameraMove(const char);
-	void playerMove(const char);
 	void MouseInput(const DIMOUSESTATE);
 
 
@@ -81,11 +80,6 @@ public:
 
 	void SetPos(D3DXMATRIX*, D3DXMATRIX*, D3DXVECTOR3*);
 	void SetScale(D3DXMATRIX*, D3DXMATRIX*, D3DXVECTOR3*);
-
-	void SetCameraView();
-	bool GetCameraView();
-
-
 };
 
 #endif

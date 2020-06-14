@@ -14,11 +14,9 @@ public:
 		void SetPosition(D3DXVECTOR3);
 		void SetRotation(float, float, float);
 		void SetRotation(D3DXVECTOR3);
-		void SetTargetDist(D3DXVECTOR3);
 		D3DXVECTOR3 GetPosition();
 		D3DXVECTOR3 GetRotation();
-		D3DXVECTOR3 GetTargetDist();
-		
+
 
 
 		void SetLookAt(D3DXVECTOR3 lookAt);
@@ -30,17 +28,16 @@ public:
 
 		D3DXVECTOR3 GetRightDirection();
 		D3DXVECTOR3 GetForwardDirection();
-		void SetFPS();
-		bool GetIsFPS();
+		
 
 
 private:  
+	//float m_positionX, m_positionY, m_positionZ;
+	//float m_rotationX, m_rotationY, m_rotationZ;
 	D3DXMATRIX m_viewMatrix;
 	D3DXVECTOR3 m_lookAt; //보는 대상
-	D3DXVECTOR3 m_front, m_right, m_pos, m_rot, m_up; //front: 카메라 앞의 단위 벡터
-	D3DXVECTOR3 m_targetDist;// 대상 간의 거리
+	D3DXVECTOR3 m_front, m_right, m_pos, m_rot, m_up;
 	float m_yaw, m_pitch, m_roll;
-	bool isFPS;
 };
 
 #endif
