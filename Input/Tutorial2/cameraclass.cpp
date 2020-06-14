@@ -17,8 +17,6 @@ CameraClass::CameraClass() {
 	m_pitch = m_rot.x * 0.0174532925f;
 	m_roll = 0.0f;
 
-	m_targetDist = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	isFPS = false;
 }
 
 CameraClass::CameraClass(const CameraClass& other) { }
@@ -93,7 +91,7 @@ void CameraClass::Render() {
  // // Finally create the view matrix from the three updated vectors. 
 	//D3DXMatrixLookAtLH(&m_viewMatrix, &position, &lookAt, &up); 
 	
-	D3DXMatrixLookAtLH(&m_viewMatrix, &m_pos, &m_lookAt, &m_up);
+	D3DXMatrixLookAtLH(&m_viewMatrix, &m_pos,&m_lookAt, &m_up);
 	return;
 }
 
@@ -115,7 +113,10 @@ D3DXVECTOR3 CameraClass::GetRightDirection() {
 }
 
 D3DXVECTOR3 CameraClass::GetForwardDirection() {
-	D3DXVec3Normalize(&m_front, &(m_lookAt - m_pos));
+	D3DXVECTOR3 pos = m_pos;
+	D3DXVECTOR3 lookAt = m_lookAt;
+
+	D3DXVec3Normalize(&m_front, &(lookAt - pos));
 	
 	return m_front;
 
@@ -125,22 +126,4 @@ D3DXVECTOR3 CameraClass::GetForwardDirection() {
 void CameraClass::SetLookAt(D3DXVECTOR3 lookAt) {
 	m_lookAt = lookAt;
 	return;
-}
-
-void CameraClass::SetFPS() {
-	isFPS = !isFPS;
-	return;
-}
-
-bool CameraClass::GetIsFPS() {
-	return isFPS;
-}
-
-void CameraClass::SetTargetDist(D3DXVECTOR3 dist) {
-	m_targetDist = dist;
-	return;
-}
-
-D3DXVECTOR3 CameraClass::GetTargetDist() {
-	return m_targetDist;
 }

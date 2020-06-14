@@ -23,10 +23,6 @@ void GameObjectClass::SetPos(D3DXVECTOR3 pos) {
 	m_pos = pos;
 	return;
 }
-void GameObjectClass::SetPos(float x, float y, float z) {
-	m_pos = D3DXVECTOR3(x, y, z);
-	return;
-}
 void GameObjectClass::SetScale(D3DXVECTOR3 scale) {
 	m_scale = scale;
 	return;
