@@ -1,3 +1,37 @@
-﻿  Graphicsclass.cpp
+﻿  bitmapclass.cpp
+  cameraclass.cpp
+  colorshaderclass.cpp
+  cpuclass.cpp
+  d3dclass.cpp
+  Fogshaderclass.cpp
+  fontclass.cpp
+  fontshaderclass.cpp
+  fpsclass.cpp
+  GameObject.cpp
+  Graphicsclass.cpp
   c:\program files (x86)\microsoft directx sdk (june 2010)\include\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
-  Tutorial2.vcxproj -> C:\Users\gts16\Desktop\Input\Debug\Tutorial2.exe
+  Inputclass.cpp
+  lightclass.cpp
+  lightshaderclass.cpp
+  main.cpp
+  modelclass.cpp
+  playerClass.cpp
+  Soundclass.cpp
+  systemclass.cpp
+  textclass.cpp
+d:\github\cgp_final\input\tutorial2\textclass.cpp(476): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(483): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(485): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(498): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(505): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(507): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(529): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(536): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(538): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  코드를 생성하고 있습니다...
+  컴파일하고 있습니다...
+  textureclass.cpp
+  textureshaderclass.cpp
+  timerclass.cpp
+  코드를 생성하고 있습니다...
+  Tutorial2.vcxproj -> D:\Github\CGP_Final\Input\Debug\Tutorial2.exe
