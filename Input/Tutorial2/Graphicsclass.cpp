@@ -28,7 +28,7 @@ GraphicsClass::GraphicsClass() {
 	speed10 = 1.0f;
 	cnt = 0;
 
-	wallNum = 1;
+	wallNum = 22;
 }
 
 GraphicsClass::GraphicsClass(const GraphicsClass& other) { }
@@ -161,9 +161,98 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	//벽 오브젝트 크기, 위치 세팅
-	m_wall[0].SetPos(-35.0f, 0.0f, 230);
+	m_wall[0].SetPos(-35.0f, 0.0f, 230.0f);
 	m_wall[0].SetScale(250.0f, 50.0f, 5.0f);
 	m_wall[0].GetColl()->SetScale(m_wall[0].GetScale());
+
+	m_wall[1].SetPos(0.0f, 15.0f, -30.0f);
+	m_wall[1].SetScale(250.0f, 50.0f, 5.0f);
+	m_wall[1].GetColl()->SetScale(m_wall[1].GetScale());
+
+	m_wall[2].SetPos(-125.0f, 15.0f, 55.0f);
+	m_wall[2].SetScale(5.0f, 50.0f, 170.0f);
+	m_wall[2].GetColl()->SetScale(m_wall[2].GetScale());
+
+	m_wall[3].SetPos(0.0f, 15.0f, 130.0f);
+	m_wall[3].SetScale(250.0f, 50.0f, 5.0f);
+	m_wall[3].GetColl()->SetScale(m_wall[3].GetScale());
+
+	m_wall[4].SetPos(125.0f, 15.0f, 55.0f);
+	m_wall[4].SetScale(5.0f, 50.0f, 170.0f);
+	m_wall[4].GetColl()->SetScale(m_wall[4].GetScale());
+
+	m_wall[5].SetPos(-80.0f, 15.0f, 100.0f);
+	m_wall[5].SetScale(3.0f, 50.0f, 30.0f);
+	m_wall[5].GetColl()->SetScale(m_wall[5].GetScale());
+
+	m_wall[6].SetPos(-50.0f, 15.0f, 85.0f);
+	m_wall[6].SetScale(100.0f, 50.0f, 3.0f);
+	m_wall[6].GetColl()->SetScale(m_wall[6].GetScale());
+
+	m_wall[7].SetPos(-100.0f, 15.0f, 55.0f);
+	m_wall[7].SetScale(50.0f, 50.0f, 3.0f);
+	m_wall[7].GetColl()->SetScale(m_wall[7].GetScale());
+
+	m_wall[8].SetPos(27.0f, 15.0f, 55.0f);
+	m_wall[8].SetScale(100.0f, 50.0f, 3.0f);
+	m_wall[8].GetColl()->SetScale(m_wall[8].GetScale());
+
+	m_wall[9].SetPos(50.0f, 15.0f, 100.0f);
+	m_wall[9].SetScale(3.0f, 50.0f, 90.0f);
+	m_wall[9].GetColl()->SetScale(m_wall[9].GetScale());
+
+	m_wall[10].SetPos(50.0f, 15.0f, 100.0f);
+	m_wall[10].SetScale(3.0f, 50.0f, 90.0f);
+	m_wall[10].GetColl()->SetScale(m_wall[10].GetScale());
+
+	m_wall[11].SetPos(90.0f, 15.0f, 85.0f);
+	m_wall[11].SetScale(30.0f, 50.0f, 3.0f);
+	m_wall[11].GetColl()->SetScale(m_wall[11].GetScale());
+
+	m_wall[12].SetPos(75.0f, 15.0f, 70.0f);
+	m_wall[12].SetScale(3.0f, 50.0f, 30.0f);
+	m_wall[12].GetColl()->SetScale(m_wall[12].GetScale());
+
+	m_wall[13].SetPos(-50.0f, 15.0f, 35.0f);
+	m_wall[13].SetScale(60.0f, 50.0f, 3.0f);
+	m_wall[13].GetColl()->SetScale(m_wall[13].GetScale());
+
+	m_wall[14].SetPos(90.0f, 15.0f, 35.0f);
+	m_wall[14].SetScale(60.0f, 50.0f, 3.0f);
+	m_wall[14].GetColl()->SetScale(m_wall[14].GetScale());
+
+	m_wall[15].SetPos(-60.0f, 15.0f, 5.0f);
+	m_wall[15].SetScale(130.0f, 50.0f, 3.0f);
+	m_wall[15].GetColl()->SetScale(m_wall[15].GetScale());
+
+	m_wall[16].SetPos(-50.0f, 15.0f, 20.0f);
+	m_wall[16].SetScale(3.0f, 50.0f, 30.0f);
+	m_wall[16].GetColl()->SetScale(m_wall[16].GetScale());
+
+	m_wall[17].SetPos(-80.0f, 15.0f, -10.0f);
+	m_wall[17].SetScale(3.0f, 50.0f, 20.0f);
+	m_wall[17].GetColl()->SetScale(m_wall[17].GetScale());
+
+	m_wall[18].SetPos(-50.0f, 15.0f, -20.0f);
+	m_wall[18].SetScale(3.0f, 50.0f, 20.0f);
+	m_wall[18].GetColl()->SetScale(m_wall[18].GetScale());
+
+	m_wall[19].SetPos(3.7f, 15.0f, -7.5f);
+	m_wall[19].SetScale(3.0f, 50.0f, 20.0f);
+	m_wall[19].GetColl()->SetScale(m_wall[19].GetScale());
+
+	m_wall[20].SetPos(30.0f, 15.0f, 30.0f);
+	m_wall[20].SetScale(3.0f, 50.0f, 50.0f);
+	m_wall[20].GetColl()->SetScale(m_wall[20].GetScale());
+
+	m_wall[21].SetPos(80.0f, 15.0f, 10.0f);
+	m_wall[21].SetScale(3.0f, 50.0f, 50.0f);
+	m_wall[21].GetColl()->SetScale(m_wall[21].GetScale());
+
+	/*m_wall[22].SetPos(0.0f, 0.0f, 20.0f);
+	m_wall[22].SetScale(250.0f, 10.0f, 100.0f);
+	m_wall[22].GetColl()->SetScale(m_wall[22].GetScale());*/
+
 
 	m_Model = new ModelClass[m_ModelMax]; 
 	if(!m_Model)  {   return false;  } 
@@ -684,7 +773,7 @@ bool GraphicsClass::Render(float rotation) {
 		//===================================================================================================================================
 		//HW3 - 1 Wall
 		// Rotate the world matrix by the rotation value so that the triangle will spin.
-		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
+		/*D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
 		D3DXMatrixScaling(&translateMatrix, 250.0f, 50.0f, 5.0f);
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 		D3DXMatrixTranslation(&translateMatrix, 0.0f, 15.0f, -30.0f);
@@ -1156,7 +1245,7 @@ bool GraphicsClass::Render(float rotation) {
 			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
 			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 		if (!result) { return false; }
-
+		*/
 		//==================================================================================================
 		//star 5개 더 배치
 		D3DXMatrixRotationY(&worldMatrix, rotation); //	D3DXMatrixRotationY(&worldMatrix, rotation);

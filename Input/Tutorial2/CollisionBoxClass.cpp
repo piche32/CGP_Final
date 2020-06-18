@@ -29,7 +29,7 @@ void CollisionBoxClass::Shutdown() {
 
 
 void CollisionBoxClass::SetPos(D3DXVECTOR3 pos) {
-	m_pos = pos;
+	m_pos = pos + m_dist;
 	return;
 }
 
@@ -51,7 +51,7 @@ void CollisionBoxClass::SetMinMax() {
 void CollisionBoxClass::Render(D3DXMATRIX* world, D3DXMATRIX* translate) {
 	D3DXMatrixScaling(translate, m_scale.x, m_scale.y, m_scale.z);
 	D3DXMatrixMultiply(world, world, translate);
-	D3DXVECTOR3 pos = m_pos + m_dist;
+	D3DXVECTOR3 pos = m_pos;
 	D3DXMatrixTranslation(translate, pos.x, pos.y, pos.z);
 	D3DXMatrixMultiply(world, world, translate);
 
