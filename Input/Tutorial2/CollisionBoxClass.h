@@ -12,6 +12,8 @@ private:
 	D3DXVECTOR3 m_dist;
 	D3DXVECTOR3 m_maxPos;
 	D3DXVECTOR3 m_minPos;
+	D3DXVECTOR3 m_rot;
+
 	bool isTrigger;
 
 
@@ -20,12 +22,13 @@ public:
 	CollisionBoxClass(const CollisionBoxClass&);
 	~CollisionBoxClass();
 
-	bool Initialize(D3DXVECTOR3, D3DXVECTOR3, D3DXVECTOR3);
+	bool Initialize(D3DXVECTOR3, D3DXVECTOR3, D3DXVECTOR3, D3DXVECTOR3);
 	void Shutdown();
 
 	void SetPos(D3DXVECTOR3);
 	void SetScale(D3DXVECTOR3);
 	void SetDist(D3DXVECTOR3);
+	void SetRot(D3DXVECTOR3);
 	void SetTrigger(bool);
 
 	void Render(D3DXMATRIX*, D3DXMATRIX*);
@@ -35,6 +38,7 @@ public:
 	D3DXVECTOR3 GetPos();
 	D3DXVECTOR3 GetScale();
 	D3DXVECTOR3 GetDist();
+	D3DXVECTOR3 GetRot();
 	void SetMinMax();
 	void GetMinMax(D3DXVECTOR3&, D3DXVECTOR3&);
 };

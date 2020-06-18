@@ -111,7 +111,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	coll = new CollisionBoxClass;
 	result = coll->Initialize(m_player->GetPos(),
-		D3DXVECTOR3(10.0f, 10.0f, 10.0f), D3DXVECTOR3(0.0f, 5.0f, 0.0f));
+		D3DXVECTOR3(10.0f, 10.0f, 10.0f), D3DXVECTOR3(0.0f, 5.0f, 0.0f), m_player->GetRot());
 	if (!result) {
 		MessageBox(hwnd, L"Could not initialize the collision Box.", L"Error", MB_OK);
 		return false;
@@ -128,7 +128,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	player->SetPastPos(player->GetPos()); //첫 past pos에는 현 위치 넣어주기
 	D3DXVECTOR3 targetDist;
 	D3DXVec3Normalize(&targetDist, &((PlayerClass*)m_player)->GetLookAt());
-	targetDist = 50.0f*targetDist + D3DXVECTOR3(0.0f, 10.0f, 0.0f);
+	targetDist = 50.0f*targetDist + D3DXVECTOR3(0.0f, 20.0f, 0.0f);
 	m_Camera->SetTargetDist(targetDist);
 	m_Camera->SetPosition(m_player->GetPos() + m_Camera->GetTargetDist()); //m_Camera->SetPosition(0.0f, 0.0f, -10.0f); tutorial2 - 1 수정 HW2 - 4
 	m_Camera->SetLookAt(m_player->GetPos() + D3DXVECTOR3(0.0f, 10.0f, 0.0f));
@@ -153,7 +153,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 			MessageBox(hwnd, L"Could not initialize the wall object.", L"Error", MB_OK);
 			return false;
 		}
-		result = m_wall[i].GetColl()->Initialize(m_wall[i].GetPos(), m_wall[i].GetScale(), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		result = m_wall[i].GetColl()->Initialize(m_wall[i].GetPos(), m_wall[i].GetScale(), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_wall[i].GetRot());
 		if (!result) {
 			MessageBox(hwnd, L"Could not initialize the wall collider.", L"Error", MB_OK);
 			return false;
@@ -297,7 +297,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
-	for (int i = 3; i < m_ModelMax-m_StarNum; i++)
+	/*sfor (int i = 3; i < m_ModelMax-m_StarNum; i++)
 	{
 		result = m_Model[i].Initialize(m_D3D->GetDevice(),
 			(char*)"../Tutorial2/data/cube.obj", (WCHAR*)L"../Tutorial2/data/floor.dds"); //error 시 여기 확인
@@ -305,7 +305,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 			MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 			return false;
 		}
-	}
+	}*/
 	for (int i = 3 + m_WallNum; i < m_ModelMax; i++)
 	{
 		result = m_Model[i].Initialize(m_D3D->GetDevice(),
@@ -665,10 +665,14 @@ bool GraphicsClass::Render(float rotation) {
 
 		// Rotate the world matrix by the rotation value so that the triangle will spin.
 
-	//m_D3D->GetWorldMatrix(worldMatrix);
+	
 
-	SetScale(&worldMatrix, &translateMatrix, &m_player->GetScale());
-	SetPos(&worldMatrix, &translateMatrix, &m_player->GetPos());
+	//m_D3D->GetWorldMatrix(worldMatrix);
+	PlayerClass* player = (PlayerClass*)m_player;
+	SetRotY(&worldMatrix, player->GetRot());
+
+	SetScale(&worldMatrix, &translateMatrix, m_player->GetScale());
+	SetPos(&worldMatrix, &translateMatrix, m_player->GetPos());
 
 	m_player->GetModel()->Render(m_D3D->GetDeviceContext());
 
@@ -685,8 +689,8 @@ bool GraphicsClass::Render(float rotation) {
 	{
 		m_D3D->GetWorldMatrix(worldMatrix);
 
-		SetScale(&worldMatrix, &translateMatrix, &m_wall[i].GetScale());
-		SetPos(&worldMatrix, &translateMatrix, &m_wall[i].GetPos());
+		SetScale(&worldMatrix, &translateMatrix, m_wall[i].GetScale());
+		SetPos(&worldMatrix, &translateMatrix, m_wall[i].GetPos());
 
 		m_wallModel->Render(m_D3D->GetDeviceContext());
 
@@ -699,7 +703,7 @@ bool GraphicsClass::Render(float rotation) {
 
 	//버섯장애물
 	D3DXMatrixRotationY(&worldMatrix, -90.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
-	SetScale(&worldMatrix, &translateMatrix, &D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+	SetScale(&worldMatrix, &translateMatrix, D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 	//SetPos(&worldMatrix, &translateMatrix, &D3DXVECTOR3(-20.0f, 0.0f, 110.f));
 	if (cnt == 15) {
 		if (move <95.0f || move >115.0f) {
@@ -1350,6 +1354,7 @@ bool GraphicsClass::Render(float rotation) {
 
 	//플레이어 콜라이더
 	m_player->GetColl()->SetPos(m_player->GetPos());
+	m_player->GetColl()->SetRot(m_player->GetRot());
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_player->GetColl()->Render(&worldMatrix, &translateMatrix);
 
@@ -1458,6 +1463,8 @@ void GraphicsClass::playerMove(const char key) {
 	D3DXVECTOR3 targetLookAt;
 	D3DXVECTOR3 targetFront;
 	D3DXVECTOR3 targetRight;
+	D3DXVECTOR3 targetRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
 	PlayerClass* player = (PlayerClass*)m_player;
 	if (player == nullptr) {
 		if (m_Camera->GetIsFPS() == false) m_Camera->SetFPS();
@@ -1468,6 +1475,7 @@ void GraphicsClass::playerMove(const char key) {
 		targetLookAt = player->GetLookAt();
 		targetFront = player->GetFront();
 		targetRight = player->GetRight();
+		//targetRot = targetLookAt;
 	}
 	float speed = 0.1f;
 	if (key == 'W')
@@ -1478,6 +1486,8 @@ void GraphicsClass::playerMove(const char key) {
 		targetLookAt.x += targetFront.x *speed;
 		targetLookAt.y += targetFront.y *speed;
 		targetLookAt.z += targetFront.z *speed;
+
+		
 	}
 	if (key == 'A')
 	{
@@ -1487,6 +1497,7 @@ void GraphicsClass::playerMove(const char key) {
 		targetLookAt.x -= targetRight.x *speed;
 		targetLookAt.y -= targetRight.y *speed;
 		targetLookAt.z -= targetRight.z *speed;
+		targetRot = D3DXVECTOR3(0.0f, -90.0f, 0.0f);
 	}
 	if (key == 'S')
 	{
@@ -1496,6 +1507,8 @@ void GraphicsClass::playerMove(const char key) {
 		targetLookAt.x -= targetFront.x *speed;
 		targetLookAt.y -= targetFront.y *speed;
 		targetLookAt.z -= targetFront.z *speed;
+		targetRot = D3DXVECTOR3(0.0f, 180.0f, 0.0f);
+
 	}
 	if (key == 'D')
 	{
@@ -1505,9 +1518,19 @@ void GraphicsClass::playerMove(const char key) {
 		targetLookAt.x += targetRight.x *speed;
 		targetLookAt.y += targetRight.y *speed;
 		targetLookAt.z += targetRight.z *speed;
+		targetRot = D3DXVECTOR3(0.0f, 90.0f, 0.0f);
+
 	}
 	player->SetPos(targetPos);	
 	player->SetLookAt(targetLookAt);
+	/*D3DXVec3Normalize(&targetLookAt, &targetLookAt);
+	D3DXVec3Normalize(&targetRot, &targetRot);
+	
+	targetRot.y = D3DXVec3Dot(&targetLookAt, &targetRot);
+	targetRot.x = 0.0f;
+	targetRot.z = 0.0f;*/
+	player->SetRot(targetRot);
+
 }
 
 void GraphicsClass::cameraMove(const char key) {
@@ -1580,7 +1603,6 @@ int GraphicsClass::countPolygons() {
 
 void GraphicsClass::MouseInput(const DIMOUSESTATE mouseState) {
 	const float moveValue = 0.3f;
-	const float value = 50.0f;
 	D3DXVECTOR3 lookat = m_Camera->GetLookAt();
 	m_Camera->GetForwardDirection();
 	D3DXVECTOR3 cameraRight = m_Camera->GetRightDirection();
@@ -1603,14 +1625,20 @@ void GraphicsClass::MouseInput(const DIMOUSESTATE mouseState) {
 }
 
 
-void GraphicsClass::SetPos(D3DXMATRIX* worldMatrix, D3DXMATRIX* translateMatrix, D3DXVECTOR3* pos) {
-	D3DXMatrixTranslation(translateMatrix, pos->x, pos->y, pos->z);
+void GraphicsClass::SetPos(D3DXMATRIX* worldMatrix, D3DXMATRIX* translateMatrix, D3DXVECTOR3 pos) {
+	D3DXMatrixTranslation(translateMatrix, pos.x, pos.y, pos.z);
 	D3DXMatrixMultiply(worldMatrix, worldMatrix, translateMatrix);
 	return;
 }
-void GraphicsClass::SetScale(D3DXMATRIX* worldMatrix, D3DXMATRIX* translateMatrix, D3DXVECTOR3* scale) {
-	D3DXMatrixScaling(translateMatrix, scale->x, scale->y, scale->z);
+void GraphicsClass::SetScale(D3DXMATRIX* worldMatrix, D3DXMATRIX* translateMatrix, D3DXVECTOR3 scale) {
+	D3DXMatrixScaling(translateMatrix, scale.x, scale.y, scale.z);
 	D3DXMatrixMultiply(worldMatrix, worldMatrix, translateMatrix);
+	return;
+}
+
+void GraphicsClass::SetRotY(D3DXMATRIX* worldMatrix, D3DXVECTOR3 rot) {
+	
+	D3DXMatrixRotationY(worldMatrix, D3DXToRadian(rot.y));
 	return;
 }
 

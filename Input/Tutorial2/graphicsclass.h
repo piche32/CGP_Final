@@ -83,8 +83,10 @@ public:
 	//HW3 - 3
 	int countPolygons();
 
-	void SetPos(D3DXMATRIX*, D3DXMATRIX*, D3DXVECTOR3*);
-	void SetScale(D3DXMATRIX*, D3DXMATRIX*, D3DXVECTOR3*);
+	void SetPos(D3DXMATRIX*, D3DXMATRIX*, D3DXVECTOR3);
+	void SetScale(D3DXMATRIX*, D3DXMATRIX*, D3DXVECTOR3);
+	void SetRotY(D3DXMATRIX*, D3DXVECTOR3);
+
 
 	void SetCameraView();
 	bool GetCameraView();

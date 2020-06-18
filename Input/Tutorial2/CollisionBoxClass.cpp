@@ -4,6 +4,7 @@ CollisionBoxClass::CollisionBoxClass() {
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 	m_dist = m_pos;
+	m_rot = m_pos;
 	isTrigger = false;
 }
 CollisionBoxClass::CollisionBoxClass(const CollisionBoxClass&) {}
@@ -13,10 +14,11 @@ bool CollisionBoxClass::Initialize() {
 	SetMinMax();
 	return true;
 }
-bool CollisionBoxClass::Initialize(D3DXVECTOR3 pos, D3DXVECTOR3 scale, D3DXVECTOR3 dist) {
+bool CollisionBoxClass::Initialize(D3DXVECTOR3 pos, D3DXVECTOR3 scale, D3DXVECTOR3 dist, D3DXVECTOR3 rot) {
 	m_pos = pos;
 	m_scale = scale;
 	m_dist = dist;
+	m_rot = rot;
 
 	m_maxPos = pos + m_scale;
 	m_minPos = pos - m_scale;
@@ -42,6 +44,11 @@ void CollisionBoxClass::SetDist(D3DXVECTOR3 dist) {
 	return;
 }
 
+void CollisionBoxClass::SetRot(D3DXVECTOR3 rot) {
+	m_rot = rot;
+	return;
+}
+
 void CollisionBoxClass::SetMinMax() {
 	m_minPos = m_pos - m_scale/2.0f; //cube의 정점들이 0.5, -0.5로 되어있기 때문에 중심부터의 거리는 0.5이다.
 	m_maxPos = m_pos + m_scale/2.0f;
@@ -49,6 +56,7 @@ void CollisionBoxClass::SetMinMax() {
 }
 
 void CollisionBoxClass::Render(D3DXMATRIX* world, D3DXMATRIX* translate) {
+	D3DXMatrixRotationY(world, D3DXToRadian(m_rot.y));
 	D3DXMatrixScaling(translate, m_scale.x, m_scale.y, m_scale.z);
 	D3DXMatrixMultiply(world, world, translate);
 	D3DXVECTOR3 pos = m_pos;
@@ -67,6 +75,10 @@ D3DXVECTOR3 CollisionBoxClass::GetScale() {
 
 D3DXVECTOR3 CollisionBoxClass::GetDist() {
 	return m_dist;
+}
+
+D3DXVECTOR3 CollisionBoxClass::GetRot() {
+	return m_rot;
 }
 
 bool CollisionBoxClass::Collision(CollisionBoxClass* other) {

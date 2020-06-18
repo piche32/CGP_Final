@@ -234,18 +234,18 @@ bool SystemClass::Frame() {
 	}
 	
 	else{
-	if (m_Input->IsKeyDown('W')) {
-		m_Graphics->playerMove('W');
-	}
-	if (m_Input->IsKeyDown(('A'))) {
-		m_Graphics->playerMove('A');
-	}
-	if (m_Input->IsKeyDown(('S'))) {
-		m_Graphics->playerMove('S');
-	}
-	if (m_Input->IsKeyDown(('D'))) {
-		m_Graphics->playerMove('D');
-	}
+		if (m_Input->IsKeyDown('W')) {
+			m_Graphics->playerMove('W');
+		}
+		else if (m_Input->IsKeyDown(('A'))) {
+			m_Graphics->playerMove('A');
+		}
+		else if (m_Input->IsKeyDown(('S'))) {
+			m_Graphics->playerMove('S');
+		}
+		else if (m_Input->IsKeyDown(('D'))) {
+			m_Graphics->playerMove('D');
+		}
 	}
 
 
