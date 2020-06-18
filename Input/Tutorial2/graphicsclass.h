@@ -64,9 +64,13 @@ public:
 	D3DClass* getD3D();
 
 	//HW2 - 3
-	ModelClass* m_plane_Model;
+	ModelClass* m_plane_Model, *m_Cube;
 	int m_ModelIndex, m_ModelMax, m_ModelVertex, m_StarNum, m_WallNum;
 	
+	ModelClass* m_wallModel;
+	GameObjectClass* m_wall;
+	int wallNum;
+
 	//HW3 - 2
 	void changeLight(const int);
 
@@ -88,6 +92,8 @@ public:
 	float move;	//장애물 움직이는 값
 	float speed10;	//더하고 빼주는 값
 	int cnt;	//fps 조절
+
+	void playerCollision(); //player 다른 오브젝트 충돌채크
 };
 
 #endif

@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClCompile Include="bitmapclass.cpp" />
     <ClCompile Include="cameraclass.cpp" />
+    <ClCompile Include="CollisionBoxClass.cpp" />
     <ClCompile Include="colorshaderclass.cpp" />
     <ClCompile Include="cpuclass.cpp" />
     <ClCompile Include="d3dclass.cpp" />
@@ -173,6 +174,7 @@
   <ItemGroup>
     <ClInclude Include="bitmapclass.h" />
     <ClInclude Include="cameraclass.h" />
+    <ClInclude Include="CollisionBoxClass.h" />
     <ClInclude Include="colorshaderclass.h" />
     <ClInclude Include="cpuclass.h" />
     <ClInclude Include="d3dclass.h" />

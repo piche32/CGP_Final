@@ -17,7 +17,9 @@ GraphicsClass::GraphicsClass() {
 
 	m_StarNum = 5;
 	m_WallNum = 21;
-	m_ModelMax = 3 + m_WallNum + m_StarNum ;
+	m_ModelMax = 3 + m_WallNum + m_StarNum;
+
+	m_Cube = 0;
 
 	m_ModelVertex = 0;
 	m_player = 0;
@@ -25,6 +27,8 @@ GraphicsClass::GraphicsClass() {
 	move = 100.0f;
 	speed10 = 1.0f;
 	cnt = 0;
+
+	wallNum = 1;
 }
 
 GraphicsClass::GraphicsClass(const GraphicsClass& other) { }
@@ -36,6 +40,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	bool result;
 	D3DXMATRIX baseViewMatrix;
+
+	ModelClass* model = nullptr;
+	CollisionBoxClass* coll = nullptr;
 
 
 	//Create the Direct3D object.
@@ -95,16 +102,30 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_player = new PlayerClass;
 	if (!m_player) { return false; }
 
-	result = m_player->Initialize(m_D3D->GetDevice(), (char*)"../Tutorial2/data/goomba.obj",
-		(WCHAR*)L"../Tutorial2/data/goomba.dds", hwnd);
+	model = new ModelClass;
+	result = model->Initialize(m_D3D->GetDevice(), (char*)"../Tutorial2/data/goomba.obj", (WCHAR*)L"../Tutorial2/data/goomba.dds");
+	if (!result) {
+		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	coll = new CollisionBoxClass;
+	result = coll->Initialize(m_player->GetPos(),
+		D3DXVECTOR3(10.0f, 10.0f, 10.0f), D3DXVECTOR3(0.0f, 5.0f, 0.0f));
+	if (!result) {
+		MessageBox(hwnd, L"Could not initialize the collision Box.", L"Error", MB_OK);
+		return false;
+	}
+	result = m_player->Initialize(m_D3D->GetDevice(), model, coll, hwnd);
 	if (!result) {
 		MessageBox(hwnd, L"Could not initialize the player object.", L"Error", MB_OK);
 		return false;
 	}
-
-	m_player->SetPos(-35.0f, 0.0f, 217.0f);
+	
+	PlayerClass* player = (PlayerClass *) m_player;
+	player->SetPos(-35.0f, 0.0f, 217.0f);
 	m_player->SetScale(D3DXVECTOR3(0.1f, 0.1f, 0.1f));
-
+	player->SetPastPos(player->GetPos()); //첫 past pos에는 현 위치 넣어주기
 	D3DXVECTOR3 targetDist;
 	D3DXVec3Normalize(&targetDist, &((PlayerClass*)m_player)->GetLookAt());
 	targetDist = 50.0f*targetDist + D3DXVECTOR3(0.0f, 10.0f, 0.0f);
@@ -112,11 +133,53 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Camera->SetPosition(m_player->GetPos() + m_Camera->GetTargetDist()); //m_Camera->SetPosition(0.0f, 0.0f, -10.0f); tutorial2 - 1 수정 HW2 - 4
 	m_Camera->SetLookAt(m_player->GetPos() + D3DXVECTOR3(0.0f, 10.0f, 0.0f));
 
+	//벽 모델 1개로 돌려쓰기!(오류시 수정)
+	m_wallModel = new ModelClass;
+	result = m_wallModel->Initialize(m_D3D->GetDevice(), (char*)"../Tutorial2/data/cube.obj", (WCHAR*)L"../Tutorial2/data/floor.dds");
+	if (!result) {
+		MessageBox(hwnd, L"Could not initialize the wall model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	//벽 오브젝트 만들기
+	m_wall = new GameObjectClass[wallNum];
+	if (!m_wall) return false;
+	for (int i = 0; i < wallNum; i++) {
+		//벽 콜라이더 만들기
+		coll = new CollisionBoxClass;
+
+		result = m_wall[i].Initialize(m_D3D->GetDevice(), m_wallModel, coll, hwnd);
+		if (!result) {
+			MessageBox(hwnd, L"Could not initialize the wall object.", L"Error", MB_OK);
+			return false;
+		}
+		result = m_wall[i].GetColl()->Initialize(m_wall[i].GetPos(), m_wall[i].GetScale(), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		if (!result) {
+			MessageBox(hwnd, L"Could not initialize the wall collider.", L"Error", MB_OK);
+			return false;
+		}
+	}
+
+	//벽 오브젝트 크기, 위치 세팅
+	m_wall[0].SetPos(-35.0f, 0.0f, 230);
+	m_wall[0].SetScale(250.0f, 50.0f, 5.0f);
+	m_wall[0].GetColl()->SetScale(m_wall[0].GetScale());
 
 	m_Model = new ModelClass[m_ModelMax]; 
 	if(!m_Model)  {   return false;  } 
 
 	//HW2 - 3
+
+	m_Cube = new ModelClass;
+	if (!m_Cube) return false;
+
+	result =m_Cube->Initialize(m_D3D->GetDevice(), (char*)"../Tutorial2/data/Cube.obj",
+		(WCHAR*)L"../Tutorial2/data/warppipe.dds");
+	if (!result) {
+		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
+		return false;
+	}
+
 	m_plane_Model = new ModelClass;
 	if (!m_plane_Model) {
 		return false;
@@ -163,6 +226,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 			return false;
 		}
 	}
+
+	
+
 	//HW2 - 3
 	result = m_plane_Model->Initialize(m_D3D->GetDevice(),
 		(char*)"../Tutorial2/data/plane.obj", (WCHAR*)L"../Tutorial2/data/floor.dds"); //error 시 여기 확인
@@ -308,8 +374,6 @@ void GraphicsClass::Shutdown() {
 	delete[] m_Model;
 	m_Model = 0;
 
-
-
 	/*if(m_Model)  {   
 		m_Model->Shutdown(); 
 		delete m_Model;  
@@ -320,6 +384,35 @@ void GraphicsClass::Shutdown() {
 		m_player->Shutdown();
 		delete m_player;
 		m_player = 0;
+	}
+
+	//벽 모델 해제
+	if (m_wallModel) {
+		m_wallModel->Shutdown();
+		delete m_wallModel;
+		m_wallModel;
+		if (m_wall) {
+			for (int i = 0; i < wallNum; i++) {
+				m_wall[i].SetModel(nullptr);
+			}
+		}
+	}
+
+	//벽 해제
+	if (m_wall) {
+		for (int i = 0; i < wallNum; i++) {
+			m_wall[i].Shutdown();
+		}
+		delete[] m_wall;
+		m_wall = 0;
+	}
+
+	
+
+	if (m_Cube) {
+		m_Cube->Shutdown();
+		delete m_Cube;
+		m_Cube = 0;
 	}
 
 	//HW2 - 3
@@ -364,6 +457,7 @@ void GraphicsClass::Shutdown() {
 		delete m_FogShader;
 		m_FogShader = 0;
 	}
+
 
 	return;
 }
@@ -414,11 +508,17 @@ bool GraphicsClass::Frame(int screenWidth, int screenHeight, int fps, int cpu, f
 
 	result = m_Text->SetScreen(screenWidth, screenHeight, m_D3D->GetDeviceContext());
 	if (!result) return false;
+
+
 	if (!m_Camera->GetIsFPS())
 	{
 		m_Camera->SetPosition(m_player->GetPos() + m_Camera->GetTargetDist()); //m_Camera->SetPosition(0.0f, 0.0f, -10.0f); tutorial2 - 1 수정 HW2 - 4
 		m_Camera->SetLookAt(m_player->GetPos() + D3DXVECTOR3(0.0f, 10.0f, 0.0f));
 	}
+
+	playerCollision();
+	
+
 	//Render the graphics scene.
 	result = Render(rotation);
 	if (!result) {
@@ -481,25 +581,32 @@ bool GraphicsClass::Render(float rotation) {
 	SetScale(&worldMatrix, &translateMatrix, &m_player->GetScale());
 	SetPos(&worldMatrix, &translateMatrix, &m_player->GetPos());
 
-	//SetScale(&worldMatrix, &translateMatrix, &D3DXVECTOR3(1.0f, 1.0f, 1.0f));
-	//SetPos(&worldMatrix, &translateMatrix, &D3DXVECTOR3(-20.0f, 0.0f, 11.0f));
-
-
-	/*result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_player->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_player->GetModel()->GetTexture(), fogStart, fogEnd);
-	if (!result) {
-		return false;
-	}*/
-
 	m_player->GetModel()->Render(m_D3D->GetDeviceContext());
 
-	//HW3 - 1
-	//HW2 - 3
-	result = result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_player->GetModel()->GetIndexCount(), worldMatrix,
+	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_player->GetModel()->GetIndexCount(), worldMatrix,
 		viewMatrix, projectionMatrix, m_player->GetModel()->GetTexture(), m_Light->GetDirection(),
 		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
 		m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+	
 	if (!result) { return false; }
+
+
+	//벽 랜더링
+	for (int i = 0; i < wallNum; i++)
+	{
+		m_D3D->GetWorldMatrix(worldMatrix);
+
+		SetScale(&worldMatrix, &translateMatrix, &m_wall[i].GetScale());
+		SetPos(&worldMatrix, &translateMatrix, &m_wall[i].GetPos());
+
+		m_wallModel->Render(m_D3D->GetDeviceContext());
+
+		//안개 효과 적용
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_wallModel->GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_wallModel->GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+	}
 
 	//버섯장애물
 	D3DXMatrixRotationY(&worldMatrix, -90.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
@@ -1148,8 +1255,39 @@ bool GraphicsClass::Render(float rotation) {
 	//HW2 - 3
 	//HW3 - 1
 
-	
+	//콜라이더 랜더링
+	result = m_D3D->ChangeFillMode('W');
+	if (!result) return false;
 
+	//플레이어 콜라이더
+	m_player->GetColl()->SetPos(m_player->GetPos());
+	m_D3D->GetWorldMatrix(worldMatrix);
+	m_player->GetColl()->Render(&worldMatrix, &translateMatrix);
+
+	m_Cube->Render(m_D3D->GetDeviceContext());
+	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Cube->GetIndexCount(), worldMatrix,
+		viewMatrix, projectionMatrix, m_Cube->GetTexture(), m_Light->GetDirection(),
+		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+		m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+	if (!result) { return false; }
+
+	//벽 콜라이더
+	for (int i = 0; i < wallNum; i++) {
+		m_D3D->GetWorldMatrix(worldMatrix);
+		m_wall[i].GetColl()->Render(&worldMatrix, &translateMatrix);
+
+		m_Cube->Render(m_D3D->GetDeviceContext());
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Cube->GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Cube->GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+	}
+
+	m_D3D->ChangeFillMode('S');
+
+
+	//플레인 랜더링
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
@@ -1344,6 +1482,9 @@ int GraphicsClass::countPolygons() {
 
 	m_ModelIndex += m_plane_Model->GetIndexCount();
 	m_ModelIndex += m_player->GetModel()->GetIndexCount();
+	for (int i = 0; i < wallNum; i++) {
+		m_ModelIndex += m_wallModel->GetIndexCount();
+	}
 
 	return (m_ModelIndex / 3);
 }
@@ -1391,4 +1532,35 @@ void GraphicsClass::SetCameraView() {
 
 bool GraphicsClass::GetCameraView() {
 	return m_Camera->GetIsFPS();
+}
+
+void GraphicsClass::playerCollision() {
+	
+	PlayerClass* player = (PlayerClass*)m_player;
+	bool bCheck = true;
+
+	D3DXVECTOR3 playerPos = player->GetColl()->GetPos();
+	D3DXVECTOR3 playerPastPos = player->GetPastPos()+player->GetColl()->GetDist();
+	D3DXVECTOR3 pos = playerPos;
+	
+	bool result;
+
+	for (int i = 0; i < wallNum; i++) {
+		if (player->GetColl()->Collision(m_wall[i].GetColl())) {
+			result = m_Text->ShowDebug("Collision Detected", m_D3D->GetDeviceContext());
+			if (!result) return;
+
+			if (D3DXVec3Length(&(playerPos - m_wall[i].GetColl()->GetPos())) <= //플레이어 콜라이더와 오브젝트 콜라이더 간의 거리 계산
+				D3DXVec3Length(&(playerPastPos - m_wall[i].GetColl()->GetPos()))) {
+				player->SetPos(player->GetPastPos()); //플레이어가 오브젝트와 더이상 가까워지지 않게 한다.
+			}
+			
+		}
+		else {
+			result = m_Text->ShowDebug("Nothing Detected", m_D3D->GetDeviceContext());
+			if (!result) return;
+		}
+	}
+
+	return;
 }

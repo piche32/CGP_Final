@@ -6,7 +6,7 @@ TextClass::TextClass() {
 	m_FontShader = 0;
 
 	m_sentence = 0;
-	maxSentence = 10;
+	maxSentence = 11;
 }
 
 TextClass::TextClass(const TextClass& other)
@@ -541,7 +541,7 @@ bool TextClass::SetPlayerInfo(D3DXVECTOR3 pos, ID3D11DeviceContext* deviceContex
 	strcat_s(curstring, ")");
 
 	// Update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence[7], curstring, 20, 160, 1.0f, 1.0f, 1.0f, deviceContext);
+	result = UpdateSentence(m_sentence[10], curstring, 20, 220, 1.0f, 1.0f, 1.0f, deviceContext);
 	if (!result)
 	{
 		return false;
@@ -581,5 +581,17 @@ bool TextClass::SetScreen(int screenWidth, int screenHeight, ID3D11DeviceContext
 		return false;
 	}
 
+	return true;
+}
+
+bool TextClass::ShowDebug(const char* debug, ID3D11DeviceContext* deviceContext) {
+	bool result;
+
+	// Update the sentence vertex buffer with the new string information.
+	result = UpdateSentence(m_sentence[9], (char*)debug, 20, 200, 1.0f, 1.0f, 1.0f, deviceContext);
+	if (!result)
+	{
+		return false;
+	}
 	return true;
 }

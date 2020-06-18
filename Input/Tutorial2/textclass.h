@@ -54,6 +54,6 @@ public:
 	bool SetPlayerInfo(D3DXVECTOR3, ID3D11DeviceContext*);
 
 	bool SetScreen(int, int, ID3D11DeviceContext*);
-
+	bool ShowDebug(const char*, ID3D11DeviceContext*);
 };
 #endif

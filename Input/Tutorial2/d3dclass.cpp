@@ -568,3 +568,35 @@ void D3DClass::TurnOffAlphaBlending()
 	m_deviceContext->OMSetBlendState(m_alphaDisableBlendingState, blendFactor, 0xffffffff);
 	return;
 }
+
+bool D3DClass::ChangeFillMode(const char name) {
+	D3D11_RASTERIZER_DESC rasterDesc;
+	HRESULT result;
+
+	if (name == 'S')
+	{	
+		rasterDesc.FillMode = D3D11_FILL_SOLID;
+	}
+	if (name == 'W') {
+		rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
+	}
+	rasterDesc.AntialiasedLineEnable = false;
+	rasterDesc.CullMode = D3D11_CULL_BACK;
+	rasterDesc.DepthBias = 0;
+	rasterDesc.DepthBiasClamp = 0.0f;
+	rasterDesc.DepthClipEnable = true;
+	rasterDesc.FrontCounterClockwise = false;
+	rasterDesc.MultisampleEnable = false;
+	rasterDesc.ScissorEnable = false;
+	rasterDesc.SlopeScaledDepthBias = 0.0f;
+
+	//Create the rasterizer state from the description we just filled out.
+	result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterState);
+	if (FAILED(result)) {
+		return false;
+	}
+
+	//Now set the rasterizer state.
+	m_deviceContext->RSSetState(m_rasterState);
+	return true;
+}

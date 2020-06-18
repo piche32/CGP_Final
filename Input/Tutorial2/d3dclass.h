@@ -40,6 +40,8 @@ public:
 	void TurnOnAlphaBlending();
 	void TurnOffAlphaBlending();
 
+	bool ChangeFillMode(const char);
+
 private:
 	bool m_vsync_enabled;
 	int m_videoCardMemory;
