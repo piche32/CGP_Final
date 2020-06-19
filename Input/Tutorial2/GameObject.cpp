@@ -6,6 +6,7 @@ GameObjectClass::GameObjectClass() {
 	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_coll = nullptr;
+	isActive = true;
 }
 
 GameObjectClass::GameObjectClass(const GameObjectClass&) {}
@@ -44,6 +45,11 @@ void GameObjectClass::SetRot(D3DXVECTOR3 rot){
 	return;
 }
 
+void GameObjectClass::SetRot(float x, float y, float z ) {
+	m_rot = D3DXVECTOR3(x, y, z);
+	return;
+}
+
 bool GameObjectClass::Initialize(ID3D11Device* device, ModelClass* model, CollisionBoxClass* coll, HWND hwnd) {
 
 	m_model = model;
@@ -74,4 +80,13 @@ void GameObjectClass::Shutdown() {
 
 CollisionBoxClass* GameObjectClass::GetColl() {
 	return m_coll;
+}
+
+void GameObjectClass::SetActive(bool value) {
+	isActive = value;
+	return;
+}
+
+bool GameObjectClass::GetActive(){
+	return isActive;
 }

@@ -12,9 +12,11 @@ private:
 	D3DXVECTOR3 m_scale;
 	D3DXVECTOR3 m_rot;
 	CollisionBoxClass* m_coll;
+	bool isActive;
 
 protected:
 	D3DXVECTOR3 m_pos;
+	
 
 public:
 	GameObjectClass();
@@ -26,6 +28,7 @@ public:
 	D3DXVECTOR3 GetScale();
 	D3DXVECTOR3 GetRot();
 	CollisionBoxClass* GetColl();
+	bool GetActive();
 
 
 	void SetModel(ModelClass*);
@@ -34,6 +37,9 @@ public:
 	void SetScale(D3DXVECTOR3);
 	void SetScale(float x, float y, float z);
 	void SetRot(D3DXVECTOR3);
+	void SetRot(float, float, float);
+	void SetActive(bool);
+
 
 	virtual bool Initialize(ID3D11Device*, ModelClass*, CollisionBoxClass*, HWND);
 	virtual void Shutdown();

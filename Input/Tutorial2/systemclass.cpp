@@ -248,6 +248,9 @@ bool SystemClass::Frame() {
 		}
 	}
 
+	if (m_Input->IsKeyDown('E')) {
+		m_Graphics->eatStar();
+	}
 
 	m_Graphics->MouseInput(m_Input->getMouseState());
 

@@ -65,11 +65,15 @@ public:
 
 	//HW2 - 3
 	ModelClass* m_plane_Model, *m_Cube;
-	int m_ModelIndex, m_ModelMax, m_ModelVertex, m_StarNum, m_WallNum;
+	int m_ModelIndex, m_ModelMax, m_ModelVertex;
 	
 	ModelClass* m_wallModel;
 	GameObjectClass* m_wall;
 	int wallNum;
+
+	ModelClass* m_starModel;
+	GameObjectClass* m_star;
+	int m_starNum;
 
 	//HW3 - 2
 	void changeLight(const int);
@@ -95,7 +99,8 @@ public:
 	float speed10;	//더하고 빼주는 값
 	int cnt;	//fps 조절
 
-	void playerCollision(); //player 다른 오브젝트 충돌채크
+	void playerCollision(); //player 다른 오브젝트 충돌체크
+	void eatStar();
 };
 
 #endif

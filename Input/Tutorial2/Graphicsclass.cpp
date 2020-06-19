@@ -15,9 +15,7 @@ GraphicsClass::GraphicsClass() {
 	m_ModelIndex = 0;
 	m_FogShader = 0;
 
-	m_StarNum = 5;
-	m_WallNum = 21;
-	m_ModelMax = 3 + m_WallNum + m_StarNum;
+	m_ModelMax = 3;
 
 	m_Cube = 0;
 
@@ -29,6 +27,7 @@ GraphicsClass::GraphicsClass() {
 	cnt = 0;
 
 	wallNum = 22;
+	m_starNum = 5;
 }
 
 GraphicsClass::GraphicsClass(const GraphicsClass& other) { }
@@ -123,15 +122,57 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 	
 	PlayerClass* player = (PlayerClass *) m_player;
-	player->SetPos(-35.0f, 0.0f, 217.0f);
+	player->SetPos(-110.0f, 0.0f, -20.0f); //(-35.0f, 0.0f, 217.0f);
 	m_player->SetScale(D3DXVECTOR3(0.1f, 0.1f, 0.1f));
 	player->SetPastPos(player->GetPos()); //첫 past pos에는 현 위치 넣어주기
+	player->SetLookAt(D3DXVECTOR3(-1.0f, 0.0f, 0.0f));
+
 	D3DXVECTOR3 targetDist;
 	D3DXVec3Normalize(&targetDist, &((PlayerClass*)m_player)->GetLookAt());
 	targetDist = 50.0f*targetDist + D3DXVECTOR3(0.0f, 20.0f, 0.0f);
 	m_Camera->SetTargetDist(targetDist);
 	m_Camera->SetPosition(m_player->GetPos() + m_Camera->GetTargetDist()); //m_Camera->SetPosition(0.0f, 0.0f, -10.0f); tutorial2 - 1 수정 HW2 - 4
 	m_Camera->SetLookAt(m_player->GetPos() + D3DXVECTOR3(0.0f, 10.0f, 0.0f));
+
+	//별 모델 1개로 돌려쓰기..
+	m_starModel = new ModelClass;
+	result = m_starModel->Initialize(m_D3D->GetDevice(), (char*)"../Tutorial2/data/star.obj", (WCHAR*)L"../Tutorial2/data/star.dds");
+	if (!result) {
+		MessageBox(hwnd, L"Could not initialize the wall model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	//별 오브젝트
+	m_star = new GameObjectClass[m_starNum];
+	if (!m_star) return false;
+	for (int i = 0; i < m_starNum; i++) {
+		//콜라이더 만들기
+		coll = new CollisionBoxClass;
+
+		result = m_star[i].Initialize(m_D3D->GetDevice(), m_starModel, coll, hwnd);
+		if (!result) {
+			MessageBox(hwnd, L"Could not initialize the wall object.", L"Error", MB_OK);
+			return false;
+		}
+		result = m_star[i].GetColl()->Initialize(m_star[i].GetPos(), m_star[i].GetScale(), D3DXVECTOR3(0.0f, 5.0f, 0.0f), m_star[i].GetRot());
+		if (!result) {
+			MessageBox(hwnd, L"Could not initialize the wall collider.", L"Error", MB_OK);
+			return false;
+		}
+		m_star[i].GetColl()->SetScale(D3DXVECTOR3(10.0f, 10.0f, 10.0f));
+	}
+
+
+	//벽 오브젝트 크기, 위치 세팅
+	m_star[0].SetPos(-10.0f, 5.0f, -10.0f);
+
+	m_star[1].SetPos(-115.0f, 5.0f, -10.0f);
+
+	m_star[2].SetPos(-115.0f, 5.0f, 110.0f);
+
+	m_star[3].SetPos(100.0f, 5.0f, 30.0f);
+
+	m_star[4].SetPos(-95.0f, 5.0f, 70.0f);
 
 	//벽 모델 1개로 돌려쓰기!(오류시 수정)
 	m_wallModel = new ModelClass;
@@ -306,7 +347,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 			return false;
 		}
 	}*/
-	for (int i = 3 + m_WallNum; i < m_ModelMax; i++)
+	/*for (int i = 3; i < m_ModelMax; i++)
 	{
 		result = m_Model[i].Initialize(m_D3D->GetDevice(),
 			(char*)"../Tutorial2/data/star.obj", (WCHAR*)L"../Tutorial2/data/star.dds"); //error 시 여기 확인
@@ -314,7 +355,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 			MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 			return false;
 		}
-	}
+	}*/
 
 	
 
@@ -475,6 +516,27 @@ void GraphicsClass::Shutdown() {
 		m_player = 0;
 	}
 
+	//별 모델 해제
+	if (m_starModel) {
+		m_starModel->Shutdown();
+		delete m_starModel;
+		m_starModel;
+		if (m_star) {
+			for (int i = 0; i < m_starNum; i++) {
+				m_star[i].SetModel(nullptr);
+			}
+		}
+	}
+
+	//별 해제
+	if (m_star) {
+		for (int i = 0; i < m_starNum; i++) {
+			m_star[i].Shutdown();
+		}
+		delete[] m_star;
+		m_star = 0;
+	}
+	
 	//벽 모델 해제
 	if (m_wallModel) {
 		m_wallModel->Shutdown();
@@ -555,10 +617,14 @@ bool GraphicsClass::Frame(int screenWidth, int screenHeight, int fps, int cpu, f
 
 	static float rotation = 0;
 	// Update the rotation variable each frame.
-	rotation += (float)D3DX_PI * 0.001f;
+	rotation += 0.1f;
 	if (rotation > 360.0f)
 	{
 		rotation -= 360.0f;
+	}
+
+	for (int i = 0; i < m_starNum; i++) {
+		m_star[i].SetRot(0.0f, rotation, 0.0f);
 	}
 
 	// Set the frames per second.
@@ -684,6 +750,25 @@ bool GraphicsClass::Render(float rotation) {
 	if (!result) { return false; }
 
 
+	//별 랜더링
+	for (int i = 0; i < m_starNum; i++)
+	{
+		if (!(m_star[i].GetActive())) continue;
+
+		m_D3D->GetWorldMatrix(worldMatrix);
+
+		SetRotY(&worldMatrix, m_star[i].GetRot());
+		SetPos(&worldMatrix, &translateMatrix, m_star[i].GetPos());
+
+		m_starModel->Render(m_D3D->GetDeviceContext());
+
+		//안개 효과 적용
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_starModel->GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_starModel->GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+	}
+
 	//벽 랜더링
 	for (int i = 0; i < wallNum; i++)
 	{
@@ -753,7 +838,7 @@ bool GraphicsClass::Render(float rotation) {
 		if (!result) { return false; }
 
 		// Rotate the world matrix by the rotation value so that the triangle will spin.
-		//star 배치
+		
 		D3DXMatrixRotationY(&worldMatrix, 0.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
 		D3DXMatrixScaling(&translateMatrix, 10.0f, 10.0f, 10.0f);
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
@@ -1250,22 +1335,22 @@ bool GraphicsClass::Render(float rotation) {
 			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 		if (!result) { return false; }
 		*/
-		//==================================================================================================
+/*		//==================================================================================================
 		//star 5개 더 배치
 		D3DXMatrixRotationY(&worldMatrix, rotation); //	D3DXMatrixRotationY(&worldMatrix, rotation);
 		D3DXMatrixTranslation(&translateMatrix, -10.0f, 5.0f, -10.0f);
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
-		m_Model[24].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+		m_Model[3].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
-		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[24].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-			m_Model[24].GetTexture(), fogStart, fogEnd + 30);
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[3].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[3].GetTexture(), fogStart, fogEnd + 30);
 		if (!result) {
 			return false;
 		}
 		// Render the model using the texture shader.
-		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[24].GetIndexCount(), worldMatrix,
-			viewMatrix, projectionMatrix, m_Model[24].GetTexture(), m_Light->GetDirection(),
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[3].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[3].GetTexture(), m_Light->GetDirection(),
 			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
 			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 		if (!result) { return false; }
@@ -1274,17 +1359,17 @@ bool GraphicsClass::Render(float rotation) {
 		D3DXMatrixTranslation(&translateMatrix, -115.0f, 5.0f, -10.0f);
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
-		m_Model[25].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+		m_Model[4].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
-		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[25].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-			m_Model[25].GetTexture(), fogStart, fogEnd + 30);
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[4].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[4].GetTexture(), fogStart, fogEnd + 30);
 		if (!result) {
 			return false;
 		}
 
 		// Render the model using the texture shader.
-		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[25].GetIndexCount(), worldMatrix,
-			viewMatrix, projectionMatrix, m_Model[25].GetTexture(), m_Light->GetDirection(),
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[4].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[4].GetTexture(), m_Light->GetDirection(),
 			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
 			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 		if (!result) { return false; }
@@ -1293,17 +1378,17 @@ bool GraphicsClass::Render(float rotation) {
 		D3DXMatrixTranslation(&translateMatrix, -115.0f, 5.0f, 120.0f);
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
-		m_Model[26].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+		m_Model[5].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
-		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[26].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-			m_Model[26].GetTexture(), fogStart, fogEnd + 30);
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[5].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[5].GetTexture(), fogStart, fogEnd + 30);
 		if (!result) {
 			return false;
 		}
 
 		// Render the model using the texture shader.
-		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[26].GetIndexCount(), worldMatrix,
-			viewMatrix, projectionMatrix, m_Model[26].GetTexture(), m_Light->GetDirection(),
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[5].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[5].GetTexture(), m_Light->GetDirection(),
 			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
 			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 		if (!result) { return false; }
@@ -1312,16 +1397,16 @@ bool GraphicsClass::Render(float rotation) {
 		D3DXMatrixTranslation(&translateMatrix, 100.0f, 5.0f, 30.0f);
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
-		m_Model[27].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+		m_Model[6].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
-		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[27].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-			m_Model[27].GetTexture(), fogStart, fogEnd + 30);
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[6].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[6].GetTexture(), fogStart, fogEnd + 30);
 		if (!result) {
 			return false;
 		}
 		// Render the model using the texture shader.
-		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[27].GetIndexCount(), worldMatrix,
-			viewMatrix, projectionMatrix, m_Model[27].GetTexture(), m_Light->GetDirection(),
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[6].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[6].GetTexture(), m_Light->GetDirection(),
 			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
 			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 		if (!result) { return false; }
@@ -1330,23 +1415,21 @@ bool GraphicsClass::Render(float rotation) {
 		D3DXMatrixTranslation(&translateMatrix, -63.0f, 5.0f, 80.0f);
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
-		m_Model[28].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
+		m_Model[7].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
 
 
-		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[28].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-			m_Model[28].GetTexture(), fogStart, fogEnd + 30);
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model[7].GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model[7].GetTexture(), fogStart, fogEnd + 30);
 		if (!result) {
 			return false;
 		}
 		// Render the model using the texture shader.
-		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[28].GetIndexCount(), worldMatrix,
-			viewMatrix, projectionMatrix, m_Model[28].GetTexture(), m_Light->GetDirection(),
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model[7].GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Model[7].GetTexture(), m_Light->GetDirection(),
 			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
 			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 		if (!result) { return false; }
-
-	//HW2 - 3
-	//HW3 - 1
+		*/
 
 	//콜라이더 랜더링
 	result = m_D3D->ChangeFillMode('W');
@@ -1364,6 +1447,20 @@ bool GraphicsClass::Render(float rotation) {
 		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
 		m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 	if (!result) { return false; }
+
+	//별 콜라이더
+	for (int i = 0; i < m_starNum; i++) {
+		if(!(m_star[i].GetActive())) continue;
+		m_D3D->GetWorldMatrix(worldMatrix);
+		m_star[i].GetColl()->Render(&worldMatrix, &translateMatrix);
+
+		m_Cube->Render(m_D3D->GetDeviceContext());
+		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Cube->GetIndexCount(), worldMatrix,
+			viewMatrix, projectionMatrix, m_Cube->GetTexture(), m_Light->GetDirection(),
+			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+		if (!result) { return false; }
+	}
 
 	//벽 콜라이더
 	for (int i = 0; i < wallNum; i++) {
@@ -1597,7 +1694,10 @@ int GraphicsClass::countPolygons() {
 	for (int i = 0; i < wallNum; i++) {
 		m_ModelIndex += m_wallModel->GetIndexCount();
 	}
-
+	for (int i = 0; i < m_starNum; i++) {
+		if(m_star[i].GetActive())
+			m_ModelIndex += m_starModel->GetIndexCount();
+	}
 	return (m_ModelIndex / 3);
 }
 
@@ -1641,7 +1741,6 @@ void GraphicsClass::SetRotY(D3DXMATRIX* worldMatrix, D3DXVECTOR3 rot) {
 	D3DXMatrixRotationY(worldMatrix, D3DXToRadian(rot.y));
 	return;
 }
-
 void GraphicsClass::SetCameraView() {
 	m_Camera->SetFPS();
 	return;
@@ -1671,13 +1770,33 @@ void GraphicsClass::playerCollision() {
 				D3DXVec3Length(&(playerPastPos - m_wall[i].GetColl()->GetPos()))) {
 				player->SetPos(player->GetPastPos()); //플레이어가 오브젝트와 더이상 가까워지지 않게 한다.
 			}
-			
+
 		}
 		else {
 			result = m_Text->ShowDebug("Nothing Detected", m_D3D->GetDeviceContext());
 			if (!result) return;
 		}
 	}
+	
+	
 
 	return;
+}
+
+void GraphicsClass::eatStar() {
+	bool result;
+	for (int i = 0; i < m_starNum; i++) {
+		if (!m_star[i].GetActive()) continue;
+		if (m_player->GetColl()->Collision(m_star[i].GetColl())) {
+			result = m_Text->ShowDebug("Star Collision Detected", m_D3D->GetDeviceContext());
+			if (!result) return;
+
+			m_star[i].SetActive(false);
+
+		}
+		else {
+			result = m_Text->ShowDebug("Nothing Detected", m_D3D->GetDeviceContext());
+			if (!result) return;
+		}
+	}
 }
