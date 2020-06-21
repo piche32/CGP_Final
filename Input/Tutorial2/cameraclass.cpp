@@ -15,7 +15,7 @@ CameraClass::CameraClass() {
 
 	m_yaw = m_rot.y * 0.0174532925f;
 	m_pitch = m_rot.x * 0.0174532925f;
-	m_roll = 0.0f;
+	m_roll = m_rot.z * 0.0174532925f;
 
 	m_targetDist = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	isFPS = false;
@@ -58,42 +58,21 @@ D3DXVECTOR3 CameraClass::GetRotation() {
 }
 
 void CameraClass::Render() {
-	//D3DXVECTOR3 up, position, lookAt; 
-	//float yaw, pitch, roll; 
-	//D3DXMATRIX rotationMatrix;
 
-	//// Setup the vector that points upwards.
-	//up = m_up;
-	//// Setup the position of the camera in the world. 
-	//position = m_pos;
 
-	//lookAt = m_lookAt; //밑에 주석해제하면 이거 잠그기
-	//D3DXVec3Normalize(&lookAt, &m_lookAt); //이상하면 이거 풀기
-	//// Setup where the camera is looking by default.
-	///*lookAt.x = m_lookAt.x; 
-	//lookAt.y = m_lookAt.y;
-	//lookAt.z = m_lookAt.z;*/
+	D3DXMATRIX rotationMatrix;
+	D3DXVECTOR3 lookAt = m_front;
+	D3DXVECTOR3 up = m_up;
 
-	//
-	//// Set the yaw (Y axis), pitch (X axis), and roll (Z axis) rotations in radians. 
-	//pitch = m_pitch;//m_rot.x * 0.0174532925f; 
-	//yaw = m_yaw;//m_rot.y * 0.0174532925f; 
-	//roll = m_roll;//m_rot.z * 0.0174532925f;
+	D3DXMatrixRotationYawPitchRoll(&rotationMatrix, m_yaw, m_pitch, m_roll);
 
-	//// Create the rotation matrix from the yaw, pitch, and roll values. 
-	//D3DXMatrixRotationYawPitchRoll(&rotationMatrix, yaw, pitch, roll); 
+	D3DXVec3TransformCoord(&lookAt, &lookAt, &rotationMatrix);
+	D3DXVec3TransformCoord(&up, &up, &rotationMatrix);
 
-	//// Transform the lookAt and up vector by the rotation matrix so the view is correctly rotated at the origin.
-	//D3DXVec3TransformCoord(&lookAt, &lookAt, &rotationMatrix);
-	//D3DXVec3TransformCoord(&up, &up, &rotationMatrix); 
+	lookAt += m_pos;
 
- // // Translate the rotated camera position to the location of the viewer.  
-	//lookAt = position + lookAt;
-	//
- // // Finally create the view matrix from the three updated vectors. 
-	//D3DXMatrixLookAtLH(&m_viewMatrix, &position, &lookAt, &up); 
-	
-	D3DXMatrixLookAtLH(&m_viewMatrix, &m_pos, &m_lookAt, &m_up);
+	D3DXMatrixLookAtLH(&m_viewMatrix, &m_pos, &lookAt, &up);
+
 	return;
 }
 
@@ -143,4 +122,13 @@ void CameraClass::SetTargetDist(D3DXVECTOR3 dist) {
 
 D3DXVECTOR3 CameraClass::GetTargetDist() {
 	return m_targetDist;
+}
+
+void CameraClass::SetYaw(float yaw) {
+	m_yaw = yaw;
+	return;
+}
+
+float CameraClass::GetYaw() {
+	return m_yaw;
 }

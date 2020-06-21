@@ -22,11 +22,13 @@ public:
 
 
 		void SetLookAt(D3DXVECTOR3 lookAt);
+		void SetYaw(float);
 
 		void Render(); 
 		void GetViewMatrix(D3DXMATRIX&);
 		
 		D3DXVECTOR3 GetLookAt();
+		float GetYaw();
 
 		D3DXVECTOR3 GetRightDirection();
 		D3DXVECTOR3 GetForwardDirection();

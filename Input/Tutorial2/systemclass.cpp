@@ -237,13 +237,13 @@ bool SystemClass::Frame() {
 		if (m_Input->IsKeyDown('W')) {
 			m_Graphics->playerMove('W');
 		}
-		else if (m_Input->IsKeyDown(('A'))) {
+		if (m_Input->IsKeyDown(('A'))) {
 			m_Graphics->playerMove('A');
 		}
-		else if (m_Input->IsKeyDown(('S'))) {
+		if (m_Input->IsKeyDown(('S'))) {
 			m_Graphics->playerMove('S');
 		}
-		else if (m_Input->IsKeyDown(('D'))) {
+		if (m_Input->IsKeyDown(('D'))) {
 			m_Graphics->playerMove('D');
 		//}
 	}

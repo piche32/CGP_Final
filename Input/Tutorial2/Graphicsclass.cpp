@@ -139,7 +139,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_player->SetScale(D3DXVECTOR3(0.1f, 0.1f, 0.1f));
 	player->SetPastPos(player->GetPos()); //첫 past pos에는 현 위치 넣어주기
 	player->SetLookAt(player->GetPos() + D3DXVECTOR3(0.0f, 0.0f, 1.0f));
-	player->SetRot(0.0f, 180.0f, 0.0f);
+	player->SetRot(0.0f, 180.0f, 0.0f); // 플레이어 모델의 초기값이 카메라를 바라보게 되어있음.
 
 	D3DXVECTOR3 targetDist;
 	D3DXVec3Normalize(&targetDist, &((PlayerClass*)m_player)->GetFront());
@@ -770,6 +770,10 @@ bool GraphicsClass::Frame(int screenWidth, int screenHeight, int fps, int cpu, f
 
 	if (!m_Camera->GetIsFPS())
 	{
+		D3DXVECTOR3 targetDist;
+		D3DXVec3Normalize(&targetDist, &((PlayerClass*)m_player)->GetFront());
+		targetDist = -80.0f*targetDist + D3DXVECTOR3(0.0f, 10.0f, 0.0f);
+		m_Camera->SetTargetDist(targetDist);
 		m_Camera->SetPosition(m_player->GetPos() + m_Camera->GetTargetDist());
 
 		m_Camera->SetLookAt(m_player->GetPos() + D3DXVECTOR3(0.0f, 20.0f, 0.0f));
@@ -1155,6 +1159,9 @@ bool GraphicsClass::Render(float rotation) {
 	// Turn on the alpha blending before rendering the text.
 	
 	m_D3D->TurnOnAlphaBlending();
+
+	//미니맵 랜더링 위치
+
 	//D3DXMatrixRotationY(&worldMatrix, 0); //	D3DXMatrixRotationY(&worldMatrix, rotation);
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_D3D->GetOrthoMatrix(orthoMatrix);
@@ -1179,66 +1186,6 @@ D3DClass* GraphicsClass::getD3D() {
 }
 
 void GraphicsClass::playerMove(const char key) {
-	/*D3DXVECTOR3 targetPos;
-	D3DXVECTOR3 targetLookAt;
-	D3DXVECTOR3 targetFront;
-	D3DXVECTOR3 targetRight;
-
-	PlayerClass* player = (PlayerClass*)m_player;
-	if (player == nullptr) {
-		if (m_Camera->GetIsFPS() == false) m_Camera->SetFPS();
-		return;
-	}
-	else {
-		targetPos = player->GetPos();
-		targetLookAt = player->GetLookAt();
-		targetFront = player->GetFront();
-		targetRight = player->GetRight();
-	}
-	float speed = 0.1f;
-	if (key == 'W')
-	{
-		targetPos.x += targetFront.x *speed;
-		targetPos.y += targetFront.y *speed;
-		targetPos.z += targetFront.z *speed;
-		targetLookAt.x += targetFront.x *speed;
-		targetLookAt.y += targetFront.y *speed;
-		targetLookAt.z += targetFront.z *speed;
-
-		
-	}
-	if (key == 'A')
-	{
-		targetPos.x -= targetRight.x *speed;	
-		targetPos.y -= targetRight.y *speed;
-		targetPos.z -= targetRight.z *speed;
-		targetLookAt.x -= targetRight.x *speed;
-		targetLookAt.y -= targetRight.y *speed;
-		targetLookAt.z -= targetRight.z *speed;
-	}
-	if (key == 'S')
-	{
-		targetPos.x -= targetFront.x *speed;
-		targetPos.y -= targetFront.y *speed;
-		targetPos.z -= targetFront.z *speed;
-		targetLookAt.x -= targetFront.x *speed;
-		targetLookAt.y -= targetFront.y *speed;
-		targetLookAt.z -= targetFront.z *speed;
-
-	}
-	if (key == 'D')
-	{
-		targetPos.x += targetRight.x *speed;
-		targetPos.y += targetRight.y *speed;
-		targetPos.z += targetRight.z *speed;
-		targetLookAt.x += targetRight.x *speed;
-		targetLookAt.y += targetRight.y *speed;
-		targetLookAt.z += targetRight.z *speed;
-
-	}
-	player->SetPos(targetPos);	
-	player->SetLookAt(targetLookAt);
-*/
 	D3DXVECTOR3 targetPos;
 	D3DXVECTOR3 targetLookAt;
 	D3DXVECTOR3 targetFront;
@@ -1303,6 +1250,9 @@ void GraphicsClass::playerMove(const char key) {
 		D3DXVec3Normalize(&targetLookAt, &(targetLookAt - targetPos));
 		targetRot.y = D3DXVec3Dot(&targetRot, &targetLookAt); //플레이어가 전에 바라보고 있던 "방향"벡터와 지금 바라보고 있는 "방향"벡터를 내적해서 cos값을 구해준다
 		targetRot.y = acos(targetRot.y); //cos값을 이용해서 두 방향 벡터 사이의 각을 구한다.
+		
+		m_Camera->SetYaw(m_Camera->GetYaw() - targetRot.y);
+
 		targetRot.y = D3DXToDegree(targetRot.y); //라디안보다 degree가 여전히 익숙하다...
 
 		targetRot.y = player->GetRot().y - targetRot.y;
@@ -1318,6 +1268,9 @@ void GraphicsClass::playerMove(const char key) {
 		targetRot.y = D3DXVec3Dot(&targetRot, &targetLookAt);
 
 		targetRot.y = acos(targetRot.y);
+
+		m_Camera->SetYaw(m_Camera->GetYaw() + targetRot.y);
+
 		targetRot.y = D3DXToDegree(targetRot.y);
 		targetRot.y = player->GetRot().y + targetRot.y;
 
@@ -1384,15 +1337,14 @@ int GraphicsClass::countPolygons() {
 		m_ModelIndex += m_Model[i].GetIndexCount();
 	}
 
-
-	m_ModelIndex += m_plane_Model->GetIndexCount();
-	m_ModelIndex += m_player->GetModel()->GetIndexCount();
+	m_ModelIndex += m_plane_Model->GetIndexCount(); //바닥 폴리곤 갯수
+	m_ModelIndex += m_player->GetModel()->GetIndexCount(); //플레이어 폴리곤 갯수
 	for (int i = 0; i < wallNum; i++) {
-		m_ModelIndex += m_wallModel->GetIndexCount();
+		m_ModelIndex += m_wallModel->GetIndexCount(); //벽 폴리곤 갯수
 	}
 	for (int i = 0; i < m_starNum; i++) {
 		if(m_star[i].GetActive())
-			m_ModelIndex += m_starModel->GetIndexCount();
+			m_ModelIndex += m_starModel->GetIndexCount(); //별 폴리곤 갯수
 	}
 	return (m_ModelIndex / 3);
 }
