@@ -122,17 +122,20 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 	
 	PlayerClass* player = (PlayerClass *) m_player;
-	player->SetPos(-110.0f, 0.0f, -20.0f); //(-35.0f, 0.0f, 217.0f);
+	player->SetPos(-35.0f, 0.0f, 217.0f); //(-110.0f, 0.0f, -20.0f); //(-35.0f, 0.0f, 217.0f);
 	m_player->SetScale(D3DXVECTOR3(0.1f, 0.1f, 0.1f));
 	player->SetPastPos(player->GetPos()); //첫 past pos에는 현 위치 넣어주기
-	player->SetLookAt(D3DXVECTOR3(-1.0f, 0.0f, 0.0f));
+	player->SetLookAt(player->GetPos() + D3DXVECTOR3(0.0f, 0.0f, 1.0f));
+	player->SetRot(0.0f, 180.0f, 0.0f);
 
 	D3DXVECTOR3 targetDist;
-	D3DXVec3Normalize(&targetDist, &((PlayerClass*)m_player)->GetLookAt());
-	targetDist = 50.0f*targetDist + D3DXVECTOR3(0.0f, 20.0f, 0.0f);
+	D3DXVec3Normalize(&targetDist, &((PlayerClass*)m_player)->GetFront());
+	//targetDist = D3DXVECTOR3(0.0f, 100.0f, 0.0f);//카메라 탑뷰로 볼 때..
+	targetDist = -80.0f*targetDist + D3DXVECTOR3(0.0f, 20.0f, 0.0f);
 	m_Camera->SetTargetDist(targetDist);
-	m_Camera->SetPosition(m_player->GetPos() + m_Camera->GetTargetDist()); //m_Camera->SetPosition(0.0f, 0.0f, -10.0f); tutorial2 - 1 수정 HW2 - 4
-	m_Camera->SetLookAt(m_player->GetPos() + D3DXVECTOR3(0.0f, 10.0f, 0.0f));
+	m_Camera->SetPosition(m_player->GetPos() + targetDist);
+	//m_Camera->SetLookAt(m_player->GetPos() + D3DXVECTOR3(0.0f, 0.0f, 1.0f)); //카메라 탑뷰로 볼 때
+	m_Camera->SetLookAt(m_player->GetPos()+ D3DXVECTOR3(0.0f, 20.0f, 0.0f));
 
 	//별 모델 1개로 돌려쓰기..
 	m_starModel = new ModelClass;
@@ -163,7 +166,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 
-	//벽 오브젝트 크기, 위치 세팅
+	//별 오브젝트 크기, 위치 세팅
 	m_star[0].SetPos(-10.0f, 5.0f, -10.0f);
 
 	m_star[1].SetPos(-115.0f, 5.0f, -10.0f);
@@ -202,7 +205,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	//벽 오브젝트 크기, 위치 세팅
-	m_wall[0].SetPos(-35.0f, 0.0f, 230.0f);
+	m_wall[0].SetPos(-350.0f, 0.0f, 2300.0f);
 	m_wall[0].SetScale(250.0f, 50.0f, 5.0f);
 	m_wall[0].GetColl()->SetScale(m_wall[0].GetScale());
 
@@ -651,7 +654,7 @@ bool GraphicsClass::Frame(int screenWidth, int screenHeight, int fps, int cpu, f
 		return false;
 	}
 
-	result = m_Text->SetPlayerInfo(m_player->GetPos(), m_D3D->GetDeviceContext());
+	result = m_Text->SetPlayerInfo(m_player->GetPos(), ((PlayerClass*)m_player)->GetLookAt(), m_D3D->GetDeviceContext());
 	if (!result)
 	{
 		return false;
@@ -667,8 +670,9 @@ bool GraphicsClass::Frame(int screenWidth, int screenHeight, int fps, int cpu, f
 
 	if (!m_Camera->GetIsFPS())
 	{
-		m_Camera->SetPosition(m_player->GetPos() + m_Camera->GetTargetDist()); //m_Camera->SetPosition(0.0f, 0.0f, -10.0f); tutorial2 - 1 수정 HW2 - 4
-		m_Camera->SetLookAt(m_player->GetPos() + D3DXVECTOR3(0.0f, 10.0f, 0.0f));
+		m_Camera->SetPosition(m_player->GetPos() + m_Camera->GetTargetDist());
+
+		m_Camera->SetLookAt(m_player->GetPos() + D3DXVECTOR3(0.0f, 20.0f, 0.0f));
 	}
 
 	playerCollision();
@@ -749,6 +753,19 @@ bool GraphicsClass::Render(float rotation) {
 	
 	if (!result) { return false; }
 
+	//플레이어 lookAt 랜더링
+	/*m_D3D->GetWorldMatrix(worldMatrix);
+	m_D3D->GetProjectionMatrix(projectionMatrix);
+
+	SetScale(&worldMatrix, &translateMatrix, D3DXVECTOR3(5.0f, 5.0f, 5.0f));
+	SetPos(&worldMatrix, &translateMatrix, player->GetLookAt());
+
+	m_Cube->Render(m_D3D->GetDeviceContext());
+
+	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Cube->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_Cube->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+		m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+	if (!result) { return false; }*/
 
 	//별 랜더링
 	for (int i = 0; i < m_starNum; i++)
@@ -1527,40 +1544,15 @@ bool GraphicsClass::Render(float rotation) {
 	return true;
 }
 
-
-//HW2 - 4
-/*TextureShaderClass* GraphicsClass::getTextureShader() {
-	return m_TextureShader;
-}*/
-
-//HW2 - 4
 D3DClass* GraphicsClass::getD3D() {
 	return m_D3D;
 }
 
-//HW3 - 2
-void GraphicsClass::changeLight(const int input) {
-	if (input == 1) {
-		m_Light->SetAmbientColor(0.0f, 0.0f, 0.0f, 0.0f);
-		m_Light->SetSpecularPower(1000000);
-	}
-	if (input == 2) {
-		m_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-		m_Light->SetSpecularPower(1000000);
-	}
-	if (input == 3) {
-		m_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-		m_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
-		m_Light->SetSpecularPower(32.0f);
-	}
-}
-
 void GraphicsClass::playerMove(const char key) {
-	D3DXVECTOR3 targetPos;
+	/*D3DXVECTOR3 targetPos;
 	D3DXVECTOR3 targetLookAt;
 	D3DXVECTOR3 targetFront;
 	D3DXVECTOR3 targetRight;
-	D3DXVECTOR3 targetRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 	PlayerClass* player = (PlayerClass*)m_player;
 	if (player == nullptr) {
@@ -1572,7 +1564,6 @@ void GraphicsClass::playerMove(const char key) {
 		targetLookAt = player->GetLookAt();
 		targetFront = player->GetFront();
 		targetRight = player->GetRight();
-		//targetRot = targetLookAt;
 	}
 	float speed = 0.1f;
 	if (key == 'W')
@@ -1594,7 +1585,6 @@ void GraphicsClass::playerMove(const char key) {
 		targetLookAt.x -= targetRight.x *speed;
 		targetLookAt.y -= targetRight.y *speed;
 		targetLookAt.z -= targetRight.z *speed;
-		targetRot = D3DXVECTOR3(0.0f, -90.0f, 0.0f);
 	}
 	if (key == 'S')
 	{
@@ -1604,7 +1594,6 @@ void GraphicsClass::playerMove(const char key) {
 		targetLookAt.x -= targetFront.x *speed;
 		targetLookAt.y -= targetFront.y *speed;
 		targetLookAt.z -= targetFront.z *speed;
-		targetRot = D3DXVECTOR3(0.0f, 180.0f, 0.0f);
 
 	}
 	if (key == 'D')
@@ -1615,19 +1604,96 @@ void GraphicsClass::playerMove(const char key) {
 		targetLookAt.x += targetRight.x *speed;
 		targetLookAt.y += targetRight.y *speed;
 		targetLookAt.z += targetRight.z *speed;
-		targetRot = D3DXVECTOR3(0.0f, 90.0f, 0.0f);
 
 	}
 	player->SetPos(targetPos);	
 	player->SetLookAt(targetLookAt);
-	/*D3DXVec3Normalize(&targetLookAt, &targetLookAt);
-	D3DXVec3Normalize(&targetRot, &targetRot);
-	
-	targetRot.y = D3DXVec3Dot(&targetLookAt, &targetRot);
-	targetRot.x = 0.0f;
-	targetRot.z = 0.0f;*/
-	player->SetRot(targetRot);
+*/
+	D3DXVECTOR3 targetPos;
+	D3DXVECTOR3 targetLookAt;
+	D3DXVECTOR3 targetFront;
+	D3DXVECTOR3 targetRight;
+	float rot = 0;
+	D3DXVECTOR3 targetRot;
+	D3DXMATRIX rotationMat;
 
+	PlayerClass* player = (PlayerClass*)m_player;
+	if (player == nullptr) {
+		if (m_Camera->GetIsFPS() == false) m_Camera->SetFPS();
+		return;
+	}
+	else {
+		targetPos = player->GetPos();
+		targetLookAt = player->GetLookAt();
+		targetFront = player->GetFront();
+		targetRight = player->GetRight();
+		targetRot = targetLookAt;
+	}
+	float speed = 0.1f;
+	if (key == 'W')
+	{
+		targetPos.x += targetFront.x *speed;
+		targetPos.y += targetFront.y *speed;
+		targetPos.z += targetFront.z *speed;
+		targetLookAt.x += targetFront.x *speed;
+		targetLookAt.y += targetFront.y *speed;
+		targetLookAt.z += targetFront.z *speed;
+
+
+	}
+	if (key == 'A')
+	{
+		targetLookAt.x -= targetRight.x * speed;
+		targetLookAt.z -= targetRight.z * speed;
+
+	}
+	if (key == 'S')
+	{
+		targetPos.x -= targetFront.x *speed;
+		targetPos.y -= targetFront.y *speed;
+		targetPos.z -= targetFront.z *speed;
+		targetLookAt.x -= targetFront.x *speed;
+		targetLookAt.y -= targetFront.y *speed;
+		targetLookAt.z -= targetFront.z *speed;
+
+	}
+	if (key == 'D')
+	{
+
+		targetLookAt.x += targetRight.x * speed;
+		targetLookAt.z += targetRight.z * speed;
+
+	}
+	player->SetPos(targetPos);
+	player->SetLookAt(targetLookAt);
+
+	if (key == 'A')
+	{
+		D3DXVec3Normalize(&targetRot, &(targetRot - targetPos));
+		D3DXVec3Normalize(&targetLookAt, &(targetLookAt - targetPos));
+		targetRot.y = D3DXVec3Dot(&targetRot, &targetLookAt); //플레이어가 전에 바라보고 있던 "방향"벡터와 지금 바라보고 있는 "방향"벡터를 내적해서 cos값을 구해준다
+		targetRot.y = acos(targetRot.y); //cos값을 이용해서 두 방향 벡터 사이의 각을 구한다.
+		targetRot.y = D3DXToDegree(targetRot.y); //라디안보다 degree가 여전히 익숙하다...
+
+		targetRot.y = player->GetRot().y - targetRot.y;
+		if (targetRot.y < -360.0f) targetRot.y = 0.0f;
+
+		player->SetRot(targetRot);
+
+	}
+	else if (key == 'D') {
+
+		D3DXVec3Normalize(&targetRot, &(targetRot - targetPos));
+		D3DXVec3Normalize(&targetLookAt, &(targetLookAt - targetPos));
+		targetRot.y = D3DXVec3Dot(&targetRot, &targetLookAt);
+
+		targetRot.y = acos(targetRot.y);
+		targetRot.y = D3DXToDegree(targetRot.y);
+		targetRot.y = player->GetRot().y + targetRot.y;
+
+		if (targetRot.y > 360.0f) targetRot.y = 0.0f;
+		player->SetRot(targetRot);
+	}
 }
 
 void GraphicsClass::cameraMove(const char key) {
@@ -1763,8 +1829,8 @@ void GraphicsClass::playerCollision() {
 
 	for (int i = 0; i < wallNum; i++) {
 		if (player->GetColl()->Collision(m_wall[i].GetColl())) {
-			result = m_Text->ShowDebug("Collision Detected", m_D3D->GetDeviceContext());
-			if (!result) return;
+			//result = m_Text->ShowDebug("Collision Detected", m_D3D->GetDeviceContext());
+		//	if (!result) return;
 
 			if (D3DXVec3Length(&(playerPos - m_wall[i].GetColl()->GetPos())) <= //플레이어 콜라이더와 오브젝트 콜라이더 간의 거리 계산
 				D3DXVec3Length(&(playerPastPos - m_wall[i].GetColl()->GetPos()))) {
@@ -1772,10 +1838,10 @@ void GraphicsClass::playerCollision() {
 			}
 
 		}
-		else {
-			result = m_Text->ShowDebug("Nothing Detected", m_D3D->GetDeviceContext());
-			if (!result) return;
-		}
+		/*else {
+		//	result = m_Text->ShowDebug("Nothing Detected", m_D3D->GetDeviceContext());
+		//	if (!result) return;
+		}*/
 	}
 	
 	
@@ -1788,15 +1854,15 @@ void GraphicsClass::eatStar() {
 	for (int i = 0; i < m_starNum; i++) {
 		if (!m_star[i].GetActive()) continue;
 		if (m_player->GetColl()->Collision(m_star[i].GetColl())) {
-			result = m_Text->ShowDebug("Star Collision Detected", m_D3D->GetDeviceContext());
-			if (!result) return;
+			//result = m_Text->ShowDebug("Star Collision Detected", m_D3D->GetDeviceContext());
+			//if (!result) return;
 
 			m_star[i].SetActive(false);
 
 		}
 		else {
-			result = m_Text->ShowDebug("Nothing Detected", m_D3D->GetDeviceContext());
-			if (!result) return;
+		//	result = m_Text->ShowDebug("Nothing Detected", m_D3D->GetDeviceContext());
+		//	if (!result) return;
 		}
 	}
 }

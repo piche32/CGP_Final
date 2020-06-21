@@ -519,7 +519,7 @@ bool TextClass::SetCameraInfo(D3DXVECTOR3 pos, D3DXVECTOR3 lookAt, ID3D11DeviceC
 	return true;
 }
 
-bool TextClass::SetPlayerInfo(D3DXVECTOR3 pos, ID3D11DeviceContext* deviceContext) {
+bool TextClass::SetPlayerInfo(D3DXVECTOR3 pos, D3DXVECTOR3 lookAt, ID3D11DeviceContext* deviceContext) {
 	char tempString[25];
 	char curstring[25];
 	bool result;
@@ -542,6 +542,29 @@ bool TextClass::SetPlayerInfo(D3DXVECTOR3 pos, ID3D11DeviceContext* deviceContex
 
 	// Update the sentence vertex buffer with the new string information.
 	result = UpdateSentence(m_sentence[10], curstring, 20, 220, 1.0f, 1.0f, 1.0f, deviceContext);
+	if (!result)
+	{
+		return false;
+	}
+	
+
+	// Convert the mouseX integer to string format.
+	_itoa_s(lookAt.x, tempString, 10);
+
+	// Setup the mouseX string.
+	strcpy_s(curstring, "lookAt (");
+	strcat_s(curstring, tempString);
+
+	strcat_s(curstring, ", ");
+	_itoa_s(lookAt.y, tempString, 10);
+	strcat_s(curstring, tempString);
+	_itoa_s(lookAt.z, tempString, 10);
+	strcat_s(curstring, ", ");
+	strcat_s(curstring, tempString);
+	strcat_s(curstring, ")");
+
+	// Update the sentence vertex buffer with the new string information.
+	result = UpdateSentence(m_sentence[9], curstring, 20, 200, 1.0f, 1.0f, 1.0f, deviceContext);
 	if (!result)
 	{
 		return false;

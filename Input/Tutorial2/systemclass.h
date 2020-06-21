@@ -43,8 +43,6 @@ private:
 	TimerClass* m_Timer;
 	SoundClass* m_Sound;
 
-	void changelight(const int);
-	//void cameraMove(InputClass *const);
 };
 // Function prototypes
 static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);

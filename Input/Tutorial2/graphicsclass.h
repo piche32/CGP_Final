@@ -75,8 +75,6 @@ public:
 	GameObjectClass* m_star;
 	int m_starNum;
 
-	//HW3 - 2
-	void changeLight(const int);
 
 	//HW3 - 4
 	void cameraMove(const char);
