@@ -201,11 +201,10 @@ bool SystemClass::Frame() {
 	// Get the location of the mouse from the input object,
 
 	
-	/*if (m_Input->IsKeyDown('1'))
-		m_Graphics->SetCameraView();*/
-		//changelight(1);
+	if (m_Input->IsKeyDown('1'))
+		m_Graphics->SetCameraView();
 
-	/*if (m_Graphics->GetCameraView()) {
+	if (m_Graphics->GetCameraView()) {
 		if (m_Input->IsKeyDown('W')) {
 			m_Graphics->cameraMove('W');
 		}
@@ -229,7 +228,7 @@ bool SystemClass::Frame() {
 
 	}
 	
-	else{*/
+	else{
 		if (m_Input->IsKeyDown('W')) {
 			m_Graphics->playerMove('W');
 		}
@@ -241,14 +240,14 @@ bool SystemClass::Frame() {
 		}
 		else if (m_Input->IsKeyDown(('D'))) {
 			m_Graphics->playerMove('D');
-		//}
+		}
 	}
 
 	if (m_Input->IsKeyDown('E')) {
 		m_Graphics->eatStar();
 	}
 
-	//m_Graphics->MouseInput(m_Input->getMouseState());
+	m_Graphics->MouseInput(m_Input->getMouseState());
 
 	// Update the system stats.
 	m_Timer->Frame();

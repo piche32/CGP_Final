@@ -177,7 +177,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	coll = new CollisionBoxClass;
 	result = coll->Initialize(m_player->GetPos(),
-		D3DXVECTOR3(10.0f, 10.0f, 10.0f), D3DXVECTOR3(0.0f, 5.0f, 0.0f), m_player->GetRot());
+		D3DXVECTOR3(8.0f, 8.0f, 8.0f), D3DXVECTOR3(0.0f, 5.0f, 0.0f), m_player->GetRot());
 	if (!result) {
 		MessageBox(hwnd, L"Could not initialize the collision Box.", L"Error", MB_OK);
 		return false;
@@ -265,11 +265,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 			MessageBox(hwnd, L"Could not initialize the wall object.", L"Error", MB_OK);
 			return false;
 		}
-		/*result = m_wall[i].GetColl()->Initialize(m_wall[i].GetPos(), m_wall[i].GetScale(), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_wall[i].GetRot());
-		if (!result) {
-			MessageBox(hwnd, L"Could not initialize the wall collider.", L"Error", MB_OK);
-			return false;
-		}*/
 	}
 
 	float m_y = 10.0f;
@@ -331,7 +326,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_wall[13].GetColl()->SetScale(m_wall[13].GetScale());
 
 	m_wall[14].SetPos(90.0f, 15.0f - m_y, 35.0f);
-	m_wall[14].SetScale(60.0f, m_y, 3.0f);
+	m_wall[14].SetScale(65.0f, m_y, 3.0f);
 	m_wall[14].GetColl()->SetScale(m_wall[14].GetScale());
 
 	m_wall[15].SetPos(-60.0f, 15.0f - m_y, 5.0f);
@@ -342,7 +337,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_wall[16].SetScale(3.0f, m_y, 30.0f);
 	m_wall[16].GetColl()->SetScale(m_wall[16].GetScale());
 	
-	m_wall[17].SetPos(-80.0f, 15.0f - m_y, -5.0f);
+	m_wall[17].SetPos(-80.0f, 15.0f - m_y, -7.0f);
 	m_wall[17].SetScale(3.0f, m_y, 20.0f);
 	m_wall[17].GetColl()->SetScale(m_wall[17].GetScale());
 
@@ -350,8 +345,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_wall[18].SetScale(3.0f, m_y, 20.0f);
 	m_wall[18].GetColl()->SetScale(m_wall[18].GetScale());
 
-	m_wall[19].SetPos(3.7f, 15.0f - m_y, -6.5f);
-	m_wall[19].SetScale(3.0f, m_y, 20.0f);
+	m_wall[19].SetPos(3.7f, 15.0f - m_y, -3.5f);
+	m_wall[19].SetScale(3.0f, m_y, 18.5f);
 	m_wall[19].GetColl()->SetScale(m_wall[19].GetScale());
 
 	m_wall[20].SetPos(30.0f, 15.0f - m_y, 30.0f);
@@ -1260,9 +1255,7 @@ void GraphicsClass::playerMove(const char key) {
 	D3DXVECTOR3 targetLookAt;
 	D3DXVECTOR3 targetFront;
 	D3DXVECTOR3 targetRight;
-	float rot = 0;
 	D3DXVECTOR3 targetRot;
-	D3DXMATRIX rotationMat;
 
 	PlayerClass* player = (PlayerClass*)m_player;
 	if (player == nullptr) {
@@ -1276,7 +1269,7 @@ void GraphicsClass::playerMove(const char key) {
 		targetRight = player->GetRight();
 		targetRot = targetLookAt;
 	}
-	float speed = 0.1f;
+	float speed = 0.5f;
 	if (key == 'W')
 	{
 		targetPos.x += targetFront.x *speed;
@@ -1290,8 +1283,8 @@ void GraphicsClass::playerMove(const char key) {
 	}
 	if (key == 'A')
 	{
-		targetLookAt.x -= targetRight.x * speed;
-		targetLookAt.z -= targetRight.z * speed;
+		targetLookAt.x -= targetRight.x * speed / 50.0f;
+		targetLookAt.z -= targetRight.z * speed / 50.0f;
 
 	}
 	if (key == 'S')
@@ -1307,12 +1300,14 @@ void GraphicsClass::playerMove(const char key) {
 	if (key == 'D')
 	{
 
-		targetLookAt.x += targetRight.x * speed;
-		targetLookAt.z += targetRight.z * speed;
+		targetLookAt.x += targetRight.x * speed / 50.0f;
+		targetLookAt.z += targetRight.z * speed / 50.0f;
 
 	}
 	player->SetPos(targetPos);
-	player->SetLookAt(targetLookAt);
+	D3DXVECTOR3 temp;
+	D3DXVec3Normalize(&temp, &(targetLookAt - targetPos));
+	player->SetLookAt(targetPos + temp);
 
 	if (key == 'A')
 	{
@@ -1420,6 +1415,8 @@ int GraphicsClass::countPolygons() {
 }
 
 void GraphicsClass::MouseInput(const DIMOUSESTATE mouseState) {
+	if (!(m_Camera->GetIsFPS())) return;
+
 	const float moveValue = 0.3f;
 	D3DXVECTOR3 lookat = m_Camera->GetLookAt();
 	m_Camera->GetForwardDirection();
