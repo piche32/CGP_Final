@@ -118,37 +118,37 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	m_count = new BitmapClass[m_countNum];
-	result = m_count[0].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/0_image.dds", 50, 50);
+	result = m_count[0].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/0.dds", 50, 50);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the 0 object.", L"Error", MB_OK);
 		return false;
 	}
-	result = m_count[1].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/1_image.dds", 50, 50);
+	result = m_count[1].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/1.dds", 50, 50);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the 1 object.", L"Error", MB_OK);
 		return false;
 	}
-	result = m_count[2].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/2_image.dds", 50, 50);
+	result = m_count[2].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/2.dds", 50, 50);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the 2 object.", L"Error", MB_OK);
 		return false;
 	}
-	result = m_count[3].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/3_image.dds", 50, 50);
+	result = m_count[3].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/3.dds", 50, 50);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the 3 object.", L"Error", MB_OK);
 		return false;
 	}
-	result = m_count[4].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/4_image.dds", 50, 50);
+	result = m_count[4].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/4.dds", 50, 50);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the 4 object.", L"Error", MB_OK);
 		return false;
 	}
-	result = m_count[5].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/5_image.dds", 50, 50);
+	result = m_count[5].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/5.dds", 50, 50);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the 5 object.", L"Error", MB_OK);
@@ -1196,7 +1196,7 @@ bool GraphicsClass::Render(float rotation) {
 	m_D3D->GetOrthoMatrix(orthoMatrix);
 	
 	//별 숫자 UI
-	result = m_count[m_getedStarCount].Render(m_D3D->GetDeviceContext(), 555, 1);
+	result = m_count[m_getedStarCount].Render(m_D3D->GetDeviceContext(), 555, 5);
 	if (!result)
 	{
 		return false;
@@ -1210,24 +1210,9 @@ bool GraphicsClass::Render(float rotation) {
 		return false;
 	}
 
-	/*if (m_getedStarCount == 0) {
-		result = m_count[0].Render(m_D3D->GetDeviceContext(), 555, 1);
-		if (!result)
-		{
-			return false;
-		}
-
-		// Render the bitmap with the texture shader.
-		result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_count[0].GetIndexCount(),
-			worldMatrix, m_baseViewMatrix, orthoMatrix, m_count[0].GetTexture()); //2D랜더링이라 projectionMatrix 대신 orthoMatrix사용
-		if (!result)
-		{
-			return false;
-		}
-	}*/
 
 	//별 UI
-	result = m_starUI->Render(m_D3D->GetDeviceContext(), 500, 0);
+	result = m_starUI->Render(m_D3D->GetDeviceContext(), 500, 5);
 	if (!result)
 	{
 		return false;
