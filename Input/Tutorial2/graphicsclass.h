@@ -57,6 +57,10 @@ private:
 	LightShaderClass* m_LightShader;
 	LightClass* m_Light;
 	BitmapClass* m_Bitmap;
+	BitmapClass* m_starUI;
+	BitmapClass* m_count;
+	int m_countNum;
+	int m_getedStarCount;
 	TextClass* m_Text;
 	D3DXMATRIX m_baseViewMatrix;
 

@@ -8,7 +8,8 @@ GraphicsClass::GraphicsClass() {
 	m_LightShader = 0;
 	m_Light = 0;
 	m_TextureShader = 0;
-	m_Bitmap = 0;
+	m_Bitmap = 0; 
+	m_starUI = 0;
 	m_Text = 0;
 	//HW2 - 3
 	m_plane_Model = 0;
@@ -42,6 +43,10 @@ GraphicsClass::GraphicsClass() {
 
 	pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	m_count = 0;
+	m_countNum = 6;
+	m_getedStarCount = 0;
 }
 
 GraphicsClass::GraphicsClass(const GraphicsClass& other) { }
@@ -68,12 +73,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);
 		return false;
 	}
-	/*  HW2 - 3
-	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
-	if (!result) {
-		MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);
-		return false;
-	}*/
 
 	m_FogShader = new FogShaderClass;
 	if (!m_FogShader) { return false; }
@@ -102,7 +101,62 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the bitmap object.", L"Error", MB_OK);
 		return false;
 	}
-	m_Camera->SetPosition(0.0f, 0.0f, -100.0f); //m_Camera->SetPosition(0.0f, 0.0f, -10.0f); tutorial2 - 1 수정 HW2 - 4
+
+	m_starUI = new BitmapClass;
+	if (!m_starUI)
+	{
+		return false;
+	}
+
+	// Initialize the bitmap object.
+	result = m_starUI->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight,
+		(WCHAR*)L"../Tutorial2/data/starUI.dds", 50, 50);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the starUI object.", L"Error", MB_OK);
+		return false;
+	}
+
+	m_count = new BitmapClass[m_countNum];
+	result = m_count[0].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/0_image.dds", 50, 50);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the 0 object.", L"Error", MB_OK);
+		return false;
+	}
+	result = m_count[1].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/1_image.dds", 50, 50);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the 1 object.", L"Error", MB_OK);
+		return false;
+	}
+	result = m_count[2].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/2_image.dds", 50, 50);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the 2 object.", L"Error", MB_OK);
+		return false;
+	}
+	result = m_count[3].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/3_image.dds", 50, 50);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the 3 object.", L"Error", MB_OK);
+		return false;
+	}
+	result = m_count[4].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/4_image.dds", 50, 50);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the 4 object.", L"Error", MB_OK);
+		return false;
+	}
+	result = m_count[5].Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/5_image.dds", 50, 50);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the 5 object.", L"Error", MB_OK);
+		return false;
+	}
+
+
+	m_Camera->SetPosition(0.0f, 0.0f, -100.0f);
 	D3DXVECTOR3 camera = D3DXVECTOR3(0.0f, 0.0f, -100.0f);
 	m_Camera->Render();
 	m_Camera->GetViewMatrix(baseViewMatrix);
@@ -180,7 +234,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		m_star[i].GetColl()->SetScale(D3DXVECTOR3(10.0f, 10.0f, 10.0f));
 	}
 
-
 	//별 오브젝트 크기, 위치 세팅
 	m_star[0].SetPos(-10.0f, 5.0f, -10.0f);
 
@@ -223,91 +276,91 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	//벽 오브젝트 크기, 위치 세팅
 	m_wall[0].SetPos(-350.0f, 0.0f- m_y, 2300.0f);
 	m_wall[0].SetScale(250.0f, m_y, 5.0f);
-	//m_wall[0].GetColl()->SetScale(m_wall[0].GetScale());
+	m_wall[0].GetColl()->SetScale(m_wall[0].GetScale());
 
 	m_wall[1].SetPos(0.0f, 15.0f - m_y, -30.0f);
 	m_wall[1].SetScale(250.0f, m_y, 5.0f);
-	//m_wall[1].GetColl()->SetScale(m_wall[1].GetScale());
+	m_wall[1].GetColl()->SetScale(m_wall[1].GetScale());
 
 	m_wall[2].SetPos(-125.0f, 15.0f - m_y, 55.0f);
 	m_wall[2].SetScale(5.0f, m_y, 170.0f);
-	//m_wall[2].GetColl()->SetScale(m_wall[2].GetScale());
+	m_wall[2].GetColl()->SetScale(m_wall[2].GetScale());
 
 	m_wall[3].SetPos(0.0f, 15.0f - m_y, 130.0f);
 	m_wall[3].SetScale(250.0f, m_y, 5.0f);
-	//m_wall[3].GetColl()->SetScale(m_wall[3].GetScale());
+	m_wall[3].GetColl()->SetScale(m_wall[3].GetScale());
 
 	m_wall[4].SetPos(125.0f, 15.0f - m_y, 55.0f);
 	m_wall[4].SetScale(5.0f, m_y, 170.0f);
-	//m_wall[4].GetColl()->SetScale(m_wall[4].GetScale());
+	m_wall[4].GetColl()->SetScale(m_wall[4].GetScale());
 
 	m_wall[5].SetPos(-80.0f, 15.0f - m_y, 100.0f);
 	m_wall[5].SetScale(3.0f, m_y, 30.0f);
-	//m_wall[5].GetColl()->SetScale(m_wall[5].GetScale());
+	m_wall[5].GetColl()->SetScale(m_wall[5].GetScale());
 
 	m_wall[6].SetPos(-50.0f, 15.0f - m_y, 85.0f);
 	m_wall[6].SetScale(100.0f, m_y, 3.0f);
-	//m_wall[6].GetColl()->SetScale(m_wall[6].GetScale());
+	m_wall[6].GetColl()->SetScale(m_wall[6].GetScale());
 
 	m_wall[7].SetPos(-100.0f, 15.0f - m_y, 55.0f);
 	m_wall[7].SetScale(50.0f, m_y, 3.0f);
-	//m_wall[7].GetColl()->SetScale(m_wall[7].GetScale());
+	m_wall[7].GetColl()->SetScale(m_wall[7].GetScale());
 
 	m_wall[8].SetPos(27.0f, 15.0f - m_y, 55.0f);
 	m_wall[8].SetScale(100.0f, m_y, 3.0f);
-	//m_wall[8].GetColl()->SetScale(m_wall[8].GetScale());
+	m_wall[8].GetColl()->SetScale(m_wall[8].GetScale());
 
 	m_wall[9].SetPos(50.0f, 15.0f - m_y, 100.0f);
 	m_wall[9].SetScale(3.0f, m_y, 90.0f);
-	//m_wall[9].GetColl()->SetScale(m_wall[9].GetScale());
+	m_wall[9].GetColl()->SetScale(m_wall[9].GetScale());
 
 	m_wall[10].SetPos(50.0f, 15.0f - m_y, 100.0f);
 	m_wall[10].SetScale(3.0f, m_y, 90.0f);
-	//m_wall[10].GetColl()->SetScale(m_wall[10].GetScale());
+	m_wall[10].GetColl()->SetScale(m_wall[10].GetScale());
 
 	m_wall[11].SetPos(90.0f, 15.0f - m_y, 85.0f);
 	m_wall[11].SetScale(30.0f, m_y, 3.0f);
-	//m_wall[11].GetColl()->SetScale(m_wall[11].GetScale());
+	m_wall[11].GetColl()->SetScale(m_wall[11].GetScale());
 	
 	m_wall[12].SetPos(75.0f, 15.0f - m_y, 70.0f);
 	m_wall[12].SetScale(3.0f, m_y, 30.0f);
-	//m_wall[12].GetColl()->SetScale(m_wall[12].GetScale());
+	m_wall[12].GetColl()->SetScale(m_wall[12].GetScale());
 
 	m_wall[13].SetPos(-50.0f, 15.0f - m_y, 35.0f);
 	m_wall[13].SetScale(60.0f, m_y, 3.0f);
-	//m_wall[13].GetColl()->SetScale(m_wall[13].GetScale());
+	m_wall[13].GetColl()->SetScale(m_wall[13].GetScale());
 
 	m_wall[14].SetPos(90.0f, 15.0f - m_y, 35.0f);
 	m_wall[14].SetScale(60.0f, m_y, 3.0f);
-	//m_wall[14].GetColl()->SetScale(m_wall[14].GetScale());
+	m_wall[14].GetColl()->SetScale(m_wall[14].GetScale());
 
 	m_wall[15].SetPos(-60.0f, 15.0f - m_y, 5.0f);
 	m_wall[15].SetScale(130.0f, m_y, 3.0f);
-	//m_wall[15].GetColl()->SetScale(m_wall[15].GetScale());
+	m_wall[15].GetColl()->SetScale(m_wall[15].GetScale());
 
 	m_wall[16].SetPos(-50.0f, 15.0f - m_y, 20.0f);
 	m_wall[16].SetScale(3.0f, m_y, 30.0f);
-	//m_wall[16].GetColl()->SetScale(m_wall[16].GetScale());
+	m_wall[16].GetColl()->SetScale(m_wall[16].GetScale());
 	
 	m_wall[17].SetPos(-80.0f, 15.0f - m_y, -10.0f);
 	m_wall[17].SetScale(3.0f, m_y, 20.0f);
-	//m_wall[17].GetColl()->SetScale(m_wall[17].GetScale());
+	m_wall[17].GetColl()->SetScale(m_wall[17].GetScale());
 
 	m_wall[18].SetPos(-50.0f, 15.0f - m_y, -20.0f);
 	m_wall[18].SetScale(3.0f, m_y, 20.0f);
-	//m_wall[18].GetColl()->SetScale(m_wall[18].GetScale());
+	m_wall[18].GetColl()->SetScale(m_wall[18].GetScale());
 
 	m_wall[19].SetPos(3.7f, 15.0f - m_y, -7.5f);
 	m_wall[19].SetScale(3.0f, m_y, 20.0f);
-	//m_wall[19].GetColl()->SetScale(m_wall[19].GetScale());
+	m_wall[19].GetColl()->SetScale(m_wall[19].GetScale());
 
 	m_wall[20].SetPos(30.0f, 15.0f - m_y, 30.0f);
 	m_wall[20].SetScale(3.0f, m_y, 50.0f);
-	//m_wall[20].GetColl()->SetScale(m_wall[20].GetScale());
+	m_wall[20].GetColl()->SetScale(m_wall[20].GetScale());
 
 	m_wall[21].SetPos(80.0f, 15.0f- m_y, 10.0f);
 	m_wall[21].SetScale(3.0f, m_y, 50.0f);
-	//m_wall[21].GetColl()->SetScale(m_wall[21].GetScale());
+	m_wall[21].GetColl()->SetScale(m_wall[21].GetScale());
 
 	/*m_wall[22].SetPos(0.0f, 0.0f, 20.0f);
 	m_wall[22].SetScale(250.0f, 10.0f, 100.0f);
@@ -374,26 +427,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
-	/*sfor (int i = 3; i < m_ModelMax-m_StarNum; i++)
-	{
-		result = m_Model[i].Initialize(m_D3D->GetDevice(),
-			(char*)"../Tutorial2/data/cube.obj", (WCHAR*)L"../Tutorial2/data/floor.dds"); //error 시 여기 확인
-		if (!result) {
-			MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
-			return false;
-		}
-	}*/
-	/*for (int i = 3; i < m_ModelMax; i++)
-	{
-		result = m_Model[i].Initialize(m_D3D->GetDevice(),
-			(char*)"../Tutorial2/data/star.obj", (WCHAR*)L"../Tutorial2/data/star.dds"); //error 시 여기 확인
-		if (!result) {
-			MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
-			return false;
-		}
-	}*/
-
-	
 
 	//HW2 - 3
 	result = m_plane_Model->Initialize(m_D3D->GetDevice(),
@@ -402,29 +435,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
-
-
-	
-	/*// Create the texture shader object.
-	m_TextureShader = new TextureShaderClass;
-	if (!m_TextureShader) {   return false;  }*/
-
- // // Initialize the color shader object.
-	//result = m_ColorShader->Initialize(m_D3D->GetDevice(), hwnd); 
-	//if(!result)  {
-	//	MessageBox(hwnd, L"Could not initialize the color shader object.", L"Error", MB_OK); 
-	//	return false;  
-	//} 
-
-
-		//HW2 - 3
-	// Initialize the color shader object.
-	/*result = m_TextureShader->Initialize(m_D3D->GetDevice(), hwnd);
-	if (!result) {
-		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
-		return false;
-	
-	}*/
 
 	// Create the light shader object.
 	m_LightShader = new LightShaderClass;
@@ -596,21 +606,6 @@ void GraphicsClass::Shutdown() {
 		m_D3D = 0;
 	}
 
-	//// Release the color shader object.
-	//if(m_ColorShader)  { 
-	//	m_ColorShader->Shutdown();
-	//	delete m_ColorShader; 
-	//	m_ColorShader = 0;  
-	//} 
-
-	// Release the texture shader object.
-	/*if(m_TextureShader)
-	{
-		m_TextureShader->Shutdown();
-		delete m_TextureShader;
-		m_TextureShader = 0;
-	}*/
-
 	// Release the light object.
 	if (m_Light)
 	{
@@ -632,12 +627,6 @@ void GraphicsClass::Shutdown() {
 	}
 	delete[] m_Model;
 	m_Model = 0;
-
-	/*if(m_Model)  {   
-		m_Model->Shutdown(); 
-		delete m_Model;  
-		m_Model = 0; 
-	} */
 
 	if (m_player) {
 		m_player->Shutdown();
@@ -716,6 +705,23 @@ void GraphicsClass::Shutdown() {
 		m_Bitmap = 0;
 	}
 
+	// 별 UI
+	if (m_starUI)
+	{
+		m_starUI->Shutdown();
+		delete m_starUI;
+		m_starUI = 0;
+	}
+
+	//별 갯수 UI
+	if (m_count) {
+		for (int i = 0; i < m_getedStarCount; i++) {
+			m_count[i].Shutdown();
+		}
+		delete[] m_count;
+		m_count = 0;
+	}
+
 	// Release the texture shader object.
 	if (m_TextureShader)
 	{
@@ -737,7 +743,6 @@ void GraphicsClass::Shutdown() {
 		delete m_FogShader;
 		m_FogShader = 0;
 	}
-
 
 	return;
 }
@@ -1187,11 +1192,55 @@ bool GraphicsClass::Render(float rotation) {
 	
 	m_D3D->TurnOnAlphaBlending();
 
-	//미니맵 랜더링 위치
-
-	//D3DXMatrixRotationY(&worldMatrix, 0); //	D3DXMatrixRotationY(&worldMatrix, rotation);
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_D3D->GetOrthoMatrix(orthoMatrix);
+	
+	//별 숫자 UI
+	result = m_count[m_getedStarCount].Render(m_D3D->GetDeviceContext(), 555, 1);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Render the bitmap with the texture shader.
+	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_count[m_getedStarCount].GetIndexCount(),
+		worldMatrix, m_baseViewMatrix, orthoMatrix, m_count[m_getedStarCount].GetTexture()); //2D랜더링이라 projectionMatrix 대신 orthoMatrix사용
+	if (!result)
+	{
+		return false;
+	}
+
+	/*if (m_getedStarCount == 0) {
+		result = m_count[0].Render(m_D3D->GetDeviceContext(), 555, 1);
+		if (!result)
+		{
+			return false;
+		}
+
+		// Render the bitmap with the texture shader.
+		result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_count[0].GetIndexCount(),
+			worldMatrix, m_baseViewMatrix, orthoMatrix, m_count[0].GetTexture()); //2D랜더링이라 projectionMatrix 대신 orthoMatrix사용
+		if (!result)
+		{
+			return false;
+		}
+	}*/
+
+	//별 UI
+	result = m_starUI->Render(m_D3D->GetDeviceContext(), 500, 0);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Render the bitmap with the texture shader.
+	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_starUI->GetIndexCount(),
+		worldMatrix, m_baseViewMatrix, orthoMatrix, m_starUI->GetTexture()); //2D랜더링이라 projectionMatrix 대신 orthoMatrix사용
+	if (!result)
+	{
+		return false;
+	}
+
 	// Render the text strings.
 	result = m_Text->Render(m_D3D->GetDeviceContext(), worldMatrix, orthoMatrix);
 	if (!result)
@@ -1453,13 +1502,7 @@ void GraphicsClass::playerCollision() {
 			}
 
 		}
-		/*else {
-		//	result = m_Text->ShowDebug("Nothing Detected", m_D3D->GetDeviceContext());
-		//	if (!result) return;
-		}*/
 	}
-	
-	
 
 	return;
 }
@@ -1475,11 +1518,9 @@ void GraphicsClass::eatStar() {
 			m_Sound->play();
 
 			m_star[i].SetActive(false);
+			m_getedStarCount++;
 
-		}
-		else {
-		//	result = m_Text->ShowDebug("Nothing Detected", m_D3D->GetDeviceContext());
-		//	if (!result) return;
+
 		}
 	}
 }

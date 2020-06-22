@@ -204,10 +204,6 @@ bool SystemClass::Frame() {
 	/*if (m_Input->IsKeyDown('1'))
 		m_Graphics->SetCameraView();*/
 		//changelight(1);
-	/*if (m_Input->IsKeyDown('2'))
-		changelight(2);
-	if (m_Input->IsKeyDown('3'))
-		changelight(3);*/
 
 	/*if (m_Graphics->GetCameraView()) {
 		if (m_Input->IsKeyDown('W')) {
@@ -237,13 +233,13 @@ bool SystemClass::Frame() {
 		if (m_Input->IsKeyDown('W')) {
 			m_Graphics->playerMove('W');
 		}
-		if (m_Input->IsKeyDown(('A'))) {
+		else if (m_Input->IsKeyDown(('A'))) {
 			m_Graphics->playerMove('A');
 		}
-		if (m_Input->IsKeyDown(('S'))) {
+		else if (m_Input->IsKeyDown(('S'))) {
 			m_Graphics->playerMove('S');
 		}
-		if (m_Input->IsKeyDown(('D'))) {
+		else if (m_Input->IsKeyDown(('D'))) {
 			m_Graphics->playerMove('D');
 		//}
 	}
