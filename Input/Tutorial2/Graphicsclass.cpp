@@ -235,15 +235,15 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	//별 오브젝트 크기, 위치 세팅
-	m_star[0].SetPos(-10.0f, 5.0f, -10.0f);
+	m_star[0].SetPos(40.0f, 5.0f, 90.0f);
 
 	m_star[1].SetPos(-115.0f, 5.0f, -10.0f);
 
 	m_star[2].SetPos(-115.0f, 5.0f, 110.0f);
 
-	m_star[3].SetPos(100.0f, 5.0f, 30.0f);
+	m_star[3].SetPos(65.0f, 5.0f, 70.0f);
 
-	m_star[4].SetPos(-95.0f, 5.0f, 70.0f);
+	m_star[4].SetPos(-60.0f, 5.0f, 20.0f);
 
 	//벽 모델 1개로 돌려쓰기!(오류시 수정)
 	m_wallModel = new ModelClass;
