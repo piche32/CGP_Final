@@ -29,8 +29,8 @@ GraphicsClass::GraphicsClass() {
 	m_player = 0;
 
 	move = 100.0f;
-	move_pp = 10.0f;
-	move_boo = 0.0f;
+	move_pp = 1.0f;
+	move_boo = 10.0f;
 	speed10 = 1.0f;
 	cnt = 0;
 	cnt1 = 0;
@@ -272,7 +272,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		}*/
 	}
 
-	float m_y = 20.0f;
+	float m_y = 10.0f;
 	//벽 오브젝트 크기, 위치 세팅
 	m_wall[0].SetPos(-350.0f, 0.0f- m_y, 2300.0f);
 	m_wall[0].SetScale(250.0f, m_y, 5.0f);
@@ -342,7 +342,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_wall[16].SetScale(3.0f, m_y, 30.0f);
 	m_wall[16].GetColl()->SetScale(m_wall[16].GetScale());
 	
-	m_wall[17].SetPos(-80.0f, 15.0f - m_y, -10.0f);
+	m_wall[17].SetPos(-80.0f, 15.0f - m_y, -5.0f);
 	m_wall[17].SetScale(3.0f, m_y, 20.0f);
 	m_wall[17].GetColl()->SetScale(m_wall[17].GetScale());
 
@@ -350,7 +350,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_wall[18].SetScale(3.0f, m_y, 20.0f);
 	m_wall[18].GetColl()->SetScale(m_wall[18].GetScale());
 
-	m_wall[19].SetPos(3.7f, 15.0f - m_y, -7.5f);
+	m_wall[19].SetPos(3.7f, 15.0f - m_y, -6.5f);
 	m_wall[19].SetScale(3.0f, m_y, 20.0f);
 	m_wall[19].GetColl()->SetScale(m_wall[19].GetScale());
 
@@ -969,6 +969,9 @@ bool GraphicsClass::Render(float rotation) {
 
 		m_wallModel->Render(m_D3D->GetDeviceContext());
 
+		result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_wallModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_wallModel->GetTexture(), fogStart, fogEnd + 30);
+
 		//안개 효과 적용
 		result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_wallModel->GetIndexCount(), worldMatrix,
 			viewMatrix, projectionMatrix, m_wallModel->GetTexture(), m_Light->GetDirection(),
@@ -980,7 +983,7 @@ bool GraphicsClass::Render(float rotation) {
 	D3DXMatrixRotationY(&worldMatrix, -90.0f); //	D3DXMatrixRotationY(&worldMatrix, rotation);
 	SetScale(&worldMatrix, &translateMatrix, D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 	//SetPos(&worldMatrix, &translateMatrix, &D3DXVECTOR3(-20.0f, 0.0f, 110.f));
-	if (cnt == 15) {
+	if (cnt == 25) {
 		if (move <95.0f || move >115.0f) {
 			speed10 = speed10 * (-1);
 		}
@@ -1053,8 +1056,8 @@ bool GraphicsClass::Render(float rotation) {
 		D3DXMatrixScaling(&translateMatrix, 0.3f, 0.3f, 0.3f);
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 
-		if (cnt1 == 15) {
-			if (move_pp <-70.0f || move_pp >120.0f) {
+		if (cnt1 == 25) {
+			if (move_pp <-150.0f || move_pp >30.0f) {
 				speed10 = speed10 * (-1);
 			}
 			move_pp += speed10;
@@ -1062,7 +1065,7 @@ bool GraphicsClass::Render(float rotation) {
 		}
 		cnt1++;
 		m_Model[3].Render(m_D3D->GetDeviceContext());//	m_Model->Render(m_D3D->GetDeviceContext());  HW2 - 3
-		D3DXMatrixTranslation(&translateMatrix, move_pp, 5.0f, 60.0f);
+		D3DXMatrixTranslation(&translateMatrix, move_pp, 5.0f, 70.0f);
 	
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing. 
@@ -1085,8 +1088,8 @@ bool GraphicsClass::Render(float rotation) {
 		//SetPos(&worldMatrix, &translateMatrix, &D3DXVECTOR3(-20.0f, 5.0f, 110.f));
 		D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 
-		if (cnt2 == 15) {
-			if (move_boo <-50.0f || move_boo >10.0f) {
+		if (cnt2 == 25) {
+			if (move_boo <-0.0f || move_boo >30.0f) {
 				speed10 = speed10 * (-1);
 			}
 			move_boo += speed10;
