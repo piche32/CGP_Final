@@ -855,9 +855,9 @@ bool GraphicsClass::Frame(int screenWidth, int screenHeight, int fps, int cpu, f
 	if (!result)
 	{
 		return false;
-	}*/
+	}
 
-	/*result = m_Text->SetPlayerInfo(m_player->GetPos(), ((PlayerClass*)m_player)->GetLookAt(), m_D3D->GetDeviceContext());
+	result = m_Text->SetPlayerInfo(m_player->GetPos(), ((PlayerClass*)m_player)->GetLookAt(), m_D3D->GetDeviceContext());
 	if (!result)
 	{
 		return false;
@@ -879,9 +879,8 @@ bool GraphicsClass::Frame(int screenWidth, int screenHeight, int fps, int cpu, f
 		m_Camera->SetTargetDist(targetDist);
 		m_Camera->SetPosition(m_player->GetPos() + m_Camera->GetTargetDist());
 
-		m_Camera->SetLookAt(m_player->GetPos() + D3DXVECTOR3(0.0f, -10.0f, 0.0f));
+		m_Camera->SetLookAt(m_player->GetPos() + D3DXVECTOR3(0.0f, 20.0f, 0.0f));
 	}
-
 	playerCollision();
 	
 
@@ -890,9 +889,6 @@ bool GraphicsClass::Frame(int screenWidth, int screenHeight, int fps, int cpu, f
 	if (!result) {
 		return false;
 	}
-
-	
-
 	return true;
 }
 
@@ -997,6 +993,20 @@ bool GraphicsClass::Render(float rotation) {
 
 	SetScale(&worldMatrix, &translateMatrix, D3DXVECTOR3(5.0f, 5.0f, 5.0f));
 	SetPos(&worldMatrix, &translateMatrix, player->GetLookAt());
+
+	m_Cube->Render(m_D3D->GetDeviceContext());
+
+	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Cube->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_Cube->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
+		m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+	if (!result) { return false; }*/
+
+	//카메라 lookAt 랜더링
+	/*m_D3D->GetWorldMatrix(worldMatrix);
+	m_D3D->GetProjectionMatrix(projectionMatrix);
+
+	SetScale(&worldMatrix, &translateMatrix, D3DXVECTOR3(5.0f, 5.0f, 5.0f));
+	SetPos(&worldMatrix, &translateMatrix, m_Camera->GetLookAt());
 
 	m_Cube->Render(m_D3D->GetDeviceContext());
 
@@ -1412,7 +1422,7 @@ void GraphicsClass::playerMove(const char key) {
 		targetRot.y = D3DXVec3Dot(&targetRot, &targetLookAt); //플레이어가 전에 바라보고 있던 "방향"벡터와 지금 바라보고 있는 "방향"벡터를 내적해서 cos값을 구해준다
 		targetRot.y = acos(targetRot.y); //cos값을 이용해서 두 방향 벡터 사이의 각을 구한다.
 		
-		m_Camera->SetYaw(m_Camera->GetYaw() - targetRot.y);
+		//m_Camera->SetYaw(m_Camera->GetYaw() - targetRot.y);
 
 		targetRot.y = D3DXToDegree(targetRot.y); //라디안보다 degree가 여전히 익숙하다...
 
@@ -1430,7 +1440,7 @@ void GraphicsClass::playerMove(const char key) {
 
 		targetRot.y = acos(targetRot.y);
 
-		m_Camera->SetYaw(m_Camera->GetYaw() + targetRot.y);
+		//m_Camera->SetYaw(m_Camera->GetYaw() + targetRot.y);
 
 		targetRot.y = D3DXToDegree(targetRot.y);
 		targetRot.y = player->GetRot().y + targetRot.y;
@@ -1511,7 +1521,7 @@ int GraphicsClass::countPolygons() {
 }
 
 void GraphicsClass::MouseInput(const DIMOUSESTATE mouseState) {
-	if (!(m_Camera->GetIsFPS())) return;
+	//if (!(m_Camera->GetIsFPS())) return;
 
 	const float moveValue = 0.3f;
 	D3DXVECTOR3 lookat = m_Camera->GetLookAt();
@@ -1553,7 +1563,7 @@ void GraphicsClass::SetRotY(D3DXMATRIX* worldMatrix, D3DXVECTOR3 rot) {
 	return;
 }
 void GraphicsClass::SetCameraView() {
-	m_Camera->SetFPS();
+	m_Camera->SetFPS();	
 	return;
 }
 
@@ -1580,8 +1590,6 @@ void GraphicsClass::playerCollision() {
 				D3DXVec3Length(&(playerPastPos - m_wall[i].GetColl()->GetPos()))) {
 				player->SetPos(player->GetPastPos()); //플레이어가 오브젝트와 더이상 가까워지지 않게 한다.
 				m_Sound2->play();
-
-			
 			}
 
 		}
@@ -1595,7 +1603,6 @@ void GraphicsClass::playerCollision() {
 				D3DXVec3Length(&(playerPastPos - m_object[i].GetColl()->GetPos()))) {
 				player->SetPos(player->GetPastPos()); //플레이어가 오브젝트와 더이상 가까워지지 않게 한다.
 			}
-
 		}
 	}
 

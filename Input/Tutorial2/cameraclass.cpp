@@ -64,6 +64,7 @@ void CameraClass::Render() {
 	D3DXVECTOR3 lookAt = m_front;
 	D3DXVECTOR3 up = m_up;
 
+	//if (isFPS == true) lookAt = GetForwardDirection();
 	D3DXMatrixRotationYawPitchRoll(&rotationMatrix, m_yaw, m_pitch, m_roll);
 
 	D3DXVec3TransformCoord(&lookAt, &lookAt, &rotationMatrix);

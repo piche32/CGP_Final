@@ -247,7 +247,6 @@ bool SystemClass::Frame() {
 		m_Graphics->eatStar();
 	}
 
-	m_Graphics->MouseInput(m_Input->getMouseState());
 
 	// Update the system stats.
 	m_Timer->Frame();
@@ -256,6 +255,7 @@ bool SystemClass::Frame() {
 
 	m_Input->GetMouseLocation(mouseX, mouseY);
 
+	m_Graphics->MouseInput(m_Input->getMouseState());
 	
 	// Do the frame processing for the graphics object.
 	result = m_Graphics->Frame(m_Input->getScreenWidth(), m_Input->getScreenHeight(),
