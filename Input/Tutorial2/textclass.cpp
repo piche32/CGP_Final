@@ -6,7 +6,7 @@ TextClass::TextClass() {
 	m_FontShader = 0;
 
 	m_sentence = 0;
-	maxSentence = 11;
+	maxSentence = 12;
 }
 
 TextClass::TextClass(const TextClass& other)
@@ -64,43 +64,11 @@ bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 			return false;
 		}
 	}
-	/*// Initialize the first sentence.
-	result = InitializeSentence(&m_sentence1, 16, device);
-	if (!result)
-	{
-		return false;
-	}
-	
-	// Initialize the first sentence.
-	result = InitializeSentence(&m_sentence2, 16, device);
-	if (!result)
-	{
-		return false;
-	}
-	
-
-	result = InitializeSentence(&m_sentence3, 30, device);
-	if (!result)
-	{
-		return false;
-	}
-
-	result = InitializeSentence(&m_sentence4, 16, device);
-	if (!result) {
-		return false;
-	}
-	result = InitializeSentence(&m_sentence5, 16, device);
-	if (!result) {
-		return false;
-	}*/
-
 	return true;
 }
 
 void TextClass::Shutdown()
 {
-
-	
 	for (int i = 0; i < maxSentence; i++)
 	{
 		ReleaseSentence(&m_sentence[i]);
@@ -443,7 +411,7 @@ bool TextClass::SetMousePosition(int mouseX, int mouseY, ID3D11DeviceContext* de
 	strcat_s(mouseString, tempString);
 
 	// Update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence[3], mouseString, 20, 80, 1.0f, 1.0f, 1.0f, deviceContext);
+	result = UpdateSentence(m_sentence[5], mouseString, 20, 120, 1.0f, 1.0f, 1.0f, deviceContext);
 	if (!result)
 	{
 		return false;
@@ -457,7 +425,7 @@ bool TextClass::SetMousePosition(int mouseX, int mouseY, ID3D11DeviceContext* de
 	strcat_s(mouseString, tempString);
 
 	// Update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence[4], mouseString, 20, 100, 1.0f, 1.0f, 1.0f, deviceContext);
+	result = UpdateSentence(m_sentence[6], mouseString, 20, 140, 1.0f, 1.0f, 1.0f, deviceContext);
 	if (!result)
 	{
 		return false;
@@ -488,7 +456,7 @@ bool TextClass::SetCameraInfo(D3DXVECTOR3 pos, D3DXVECTOR3 lookAt, ID3D11DeviceC
 	strcat_s(cameraString, ")");
 
 	// Update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence[5], cameraString, 20, 120, 1.0f, 1.0f, 1.0f, deviceContext);
+	result = UpdateSentence(m_sentence[7], cameraString, 20, 160, 1.0f, 1.0f, 1.0f, deviceContext);
 	if (!result)
 	{
 		return false;
@@ -510,7 +478,7 @@ bool TextClass::SetCameraInfo(D3DXVECTOR3 pos, D3DXVECTOR3 lookAt, ID3D11DeviceC
 	strcat_s(cameraString, ")");
 
 	// Update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence[6], cameraString, 20, 140, 1.0f, 1.0f, 1.0f, deviceContext);
+	result = UpdateSentence(m_sentence[8], cameraString, 20, 180, 1.0f, 1.0f, 1.0f, deviceContext);
 	if (!result)
 	{
 		return false;
@@ -541,7 +509,7 @@ bool TextClass::SetPlayerInfo(D3DXVECTOR3 pos, D3DXVECTOR3 lookAt, ID3D11DeviceC
 	strcat_s(curstring, ")");
 
 	// Update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence[10], curstring, 20, 220, 1.0f, 1.0f, 1.0f, deviceContext);
+	result = UpdateSentence(m_sentence[9], curstring, 20, 200, 1.0f, 1.0f, 1.0f, deviceContext);
 	if (!result)
 	{
 		return false;
@@ -564,7 +532,7 @@ bool TextClass::SetPlayerInfo(D3DXVECTOR3 pos, D3DXVECTOR3 lookAt, ID3D11DeviceC
 	strcat_s(curstring, ")");
 
 	// Update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence[9], curstring, 20, 200, 1.0f, 1.0f, 1.0f, deviceContext);
+	result = UpdateSentence(m_sentence[10], curstring, 20, 220, 1.0f, 1.0f, 1.0f, deviceContext);
 	if (!result)
 	{
 		return false;
@@ -584,7 +552,7 @@ bool TextClass::SetScreen(int screenWidth, int screenHeight, ID3D11DeviceContext
 	strcat_s(screenString, tempString);
 
 	// Update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence[7], screenString, 20, 160, 1.0f, 1.0f, 1.0f, deviceContext);
+	result = UpdateSentence(m_sentence[3], screenString, 20, 80, 0.0f, 1.0f, 0.0f, deviceContext);
 	if (!result)
 	{
 		return false;
@@ -598,7 +566,7 @@ bool TextClass::SetScreen(int screenWidth, int screenHeight, ID3D11DeviceContext
 	strcat_s(screenString, tempString);
 
 	// Update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence[8], screenString, 20, 180, 1.0f, 1.0f, 1.0f, deviceContext);
+	result = UpdateSentence(m_sentence[4], screenString, 20, 100, 0.0f, 1.0f, 0.0f, deviceContext);
 	if (!result)
 	{
 		return false;
@@ -611,7 +579,7 @@ bool TextClass::ShowDebug(const char* debug, ID3D11DeviceContext* deviceContext)
 	bool result;
 
 	// Update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence[9], (char*)debug, 20, 200, 1.0f, 1.0f, 1.0f, deviceContext);
+	result = UpdateSentence(m_sentence[12], (char*)debug, 20, 220, 1.0f, 1.0f, 1.0f, deviceContext);
 	if (!result)
 	{
 		return false;

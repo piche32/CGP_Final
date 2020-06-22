@@ -1,8 +1,14 @@
-﻿  Graphicsclass.cpp
-  c:\program files (x86)\microsoft directx sdk (june 2010)\include\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
-d:\github\cgp_final\input\tutorial2\graphicsclass.cpp(1421): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\github\cgp_final\input\tutorial2\graphicsclass.cpp(1439): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\github\cgp_final\input\tutorial2\graphicsclass.cpp(1556): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\github\cgp_final\input\tutorial2\graphicsclass.cpp(1577): warning C4101: 'result' :참조되지 않은 지역 변수입니다.
-d:\github\cgp_final\input\tutorial2\graphicsclass.cpp(1612): warning C4101: 'result' :참조되지 않은 지역 변수입니다.
+﻿  textclass.cpp
+d:\github\cgp_final\input\tutorial2\textclass.cpp(444): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(451): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(453): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(466): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(473): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(475): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(497): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(504): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(506): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(520): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(527): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\github\cgp_final\input\tutorial2\textclass.cpp(529): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   Tutorial2.vcxproj -> D:\Github\CGP_Final\Input\Debug\Tutorial2.exe

@@ -851,21 +851,21 @@ bool GraphicsClass::Frame(int screenWidth, int screenHeight, int fps, int cpu, f
 	{
 		return false;
 	}
-	result = m_Text->SetCameraInfo(m_Camera->GetPosition(), m_Camera->GetLookAt(), m_D3D->GetDeviceContext());
+	/*result = m_Text->SetCameraInfo(m_Camera->GetPosition(), m_Camera->GetLookAt(), m_D3D->GetDeviceContext());
 	if (!result)
 	{
 		return false;
-	}
+	}*/
 
-	result = m_Text->SetPlayerInfo(m_player->GetPos(), ((PlayerClass*)m_player)->GetLookAt(), m_D3D->GetDeviceContext());
+	/*result = m_Text->SetPlayerInfo(m_player->GetPos(), ((PlayerClass*)m_player)->GetLookAt(), m_D3D->GetDeviceContext());
 	if (!result)
 	{
 		return false;
-	}
+	}*/
 
-	//Set the location of the mouse.
+	/*//Set the location of the mouse.
 	result = m_Text->SetMousePosition(mouseX, mouseY, m_D3D->GetDeviceContext());
-	if (!result) return false;
+	if (!result) return false;*/
 
 	result = m_Text->SetScreen(screenWidth, screenHeight, m_D3D->GetDeviceContext());
 	if (!result) return false;
@@ -1201,7 +1201,7 @@ bool GraphicsClass::Render(float rotation) {
 	if (!result) return false;
 
 	//플레이어 콜라이더
-	m_player->GetColl()->SetPos(m_player->GetPos());
+	/*m_player->GetColl()->SetPos(m_player->GetPos());
 	m_player->GetColl()->SetRot(m_player->GetRot());
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_player->GetColl()->Render(&worldMatrix, &translateMatrix);
@@ -1211,7 +1211,7 @@ bool GraphicsClass::Render(float rotation) {
 		viewMatrix, projectionMatrix, m_Cube->GetTexture(), m_Light->GetDirection(),
 		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
 		m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
-	if (!result) { return false; }
+	if (!result) { return false; }*/
 
 	//별 콜라이더
 	/*for (int i = 0; i < m_starNum; i++) {
@@ -1228,7 +1228,7 @@ bool GraphicsClass::Render(float rotation) {
 	}*/
 
 	//방해물 콜라이더
-	for (int i = 0; i < m_ModelMax; i++) {
+	/*for (int i = 0; i < m_ModelMax; i++) {
 		m_D3D->GetWorldMatrix(worldMatrix);
 		m_object[i].GetColl()->Render(&worldMatrix, &translateMatrix);
 
@@ -1238,7 +1238,7 @@ bool GraphicsClass::Render(float rotation) {
 			m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
 			m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 		if (!result) { return false; }
-	}
+	}*/
 
 	//벽 콜라이더
 	/*for (int i = 0; i < wallNum; i++) {
@@ -1378,8 +1378,6 @@ void GraphicsClass::playerMove(const char key) {
 		targetLookAt.x += targetFront.x *speed;
 		targetLookAt.y += targetFront.y *speed;
 		targetLookAt.z += targetFront.z *speed;
-
-
 	}
 	if (key == 'A')
 	{
@@ -1395,11 +1393,9 @@ void GraphicsClass::playerMove(const char key) {
 		targetLookAt.x -= targetFront.x *speed;
 		targetLookAt.y -= targetFront.y *speed;
 		targetLookAt.z -= targetFront.z *speed;
-
 	}
 	if (key == 'D')
 	{
-
 		targetLookAt.x += targetRight.x * speed / 50.0f;
 		targetLookAt.z += targetRight.z * speed / 50.0f;
 
@@ -1579,8 +1575,6 @@ void GraphicsClass::playerCollision() {
 	//벽
 	for (int i = 0; i < wallNum; i++) {
 		if (player->GetColl()->Collision(m_wall[i].GetColl())) {
-			//result = m_Text->ShowDebug("Collision Detected", m_D3D->GetDeviceContext());
-		//	if (!result) return;
 
 			if (D3DXVec3Length(&(playerPos - m_wall[i].GetColl()->GetPos())) <= //플레이어 콜라이더와 오브젝트 콜라이더 간의 거리 계산
 				D3DXVec3Length(&(playerPastPos - m_wall[i].GetColl()->GetPos()))) {
@@ -1613,9 +1607,6 @@ void GraphicsClass::eatStar() {
 	for (int i = 0; i < m_starNum; i++) {
 		if (!m_star[i].GetActive()) continue;
 		if (m_player->GetColl()->Collision(m_star[i].GetColl())) {
-			//result = m_Text->ShowDebug("Star Collision Detected", m_D3D->GetDeviceContext());
-			//if (!result) return;
-			//result = m_Sound->Initialize_Effect(hwnd);
 			m_Sound->play();
 
 			m_star[i].SetActive(false);
