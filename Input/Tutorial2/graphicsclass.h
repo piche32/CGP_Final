@@ -74,6 +74,7 @@ private:
 	PositionClass* m_Position;
 
 	SoundClass* m_Sound;
+	SoundClass* m_Sound2;
 
 	//HW2 - 4
 public:

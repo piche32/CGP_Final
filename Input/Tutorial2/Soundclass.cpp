@@ -14,6 +14,31 @@ SoundClass::SoundClass(const SoundClass& other)
 SoundClass::~SoundClass()
 {
 }
+
+bool SoundClass::Initialize_Coll(HWND hwnd) {
+
+	bool result;
+
+	// Initialize direct sound and the primary sound buffer.
+	result = InitializeDirectSound(hwnd);
+	if (!result)
+	{
+		return false;
+	}
+	// Load a wave audio file onto a secondary buffer.
+	result = LoadWaveFile((char*)"../Tutorial2/data/sound01.wav", &m_secondaryBuffer1);
+	if (!result)
+	{
+		return false;
+	}
+	// Play the wave file now that it has been loaded.
+	/*result = PlayWaveFile();
+	if (!result)
+	{
+		return false;
+	}*/
+	return true;
+}
 bool SoundClass::Initialize_Effect(HWND hwnd) {
 
 	bool result;

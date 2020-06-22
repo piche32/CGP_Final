@@ -34,6 +34,8 @@ public:
 	SoundClass(const SoundClass&);
 	~SoundClass();
 
+	bool Initialize_Coll(HWND);
+
 	bool Initialize_Effect(HWND);
 	bool Initialize(HWND);
 	void Shutdown();

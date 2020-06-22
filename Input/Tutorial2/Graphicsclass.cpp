@@ -37,7 +37,7 @@ GraphicsClass::GraphicsClass() {
 	cnt2 = 0;
 
 	m_Sound = 0;
-
+	m_Sound2 = 0;
 	wallNum = 22;
 	m_starNum = 5;
 
@@ -552,7 +552,19 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize Direct Sound.", L"Error", MB_OK);
 		return false;
 	}
-	
+	// Create the sound object.
+	m_Sound2 = new SoundClass;
+	if (!m_Sound2)
+	{
+		return false;
+	}
+	// Initialize the sound object.
+	result = m_Sound2->Initialize_Coll(hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize Direct Sound.", L"Error", MB_OK);
+		return false;
+	}
 
 	m_Position = new PositionClass;
 	if (!m_Position) {
@@ -564,6 +576,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 }
 
 void GraphicsClass::Shutdown() {
+
+
+	if (m_Sound2)
+	{
+		m_Sound2->Shutdown();
+		delete m_Sound2;
+		m_Sound2 = 0;
+	}
 	// Release the sound object.
 	if (m_Sound)
 	{
@@ -1484,6 +1504,9 @@ void GraphicsClass::playerCollision() {
 			if (D3DXVec3Length(&(playerPos - m_wall[i].GetColl()->GetPos())) <= //플레이어 콜라이더와 오브젝트 콜라이더 간의 거리 계산
 				D3DXVec3Length(&(playerPastPos - m_wall[i].GetColl()->GetPos()))) {
 				player->SetPos(player->GetPastPos()); //플레이어가 오브젝트와 더이상 가까워지지 않게 한다.
+				m_Sound2->play();
+
+			
 			}
 
 		}
