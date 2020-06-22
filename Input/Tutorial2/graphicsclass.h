@@ -21,6 +21,7 @@
 #include "Terrainclass.h"
 #include "timerclass.h"
 #include "positionclass.h"
+#include "Soundclass.h"
 
 #include <dinput.h>
 #pragma comment(lib, "dinput8.lib")
@@ -68,6 +69,7 @@ private:
 	TimerClass* m_Time;
 	PositionClass* m_Position;
 
+	SoundClass* m_Sound;
 
 	//HW2 - 4
 public:

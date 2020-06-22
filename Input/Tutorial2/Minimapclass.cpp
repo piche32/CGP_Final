@@ -45,7 +45,7 @@ bool MiniMapClass::Initialize(ID3D11Device* device, HWND hwnd, int screenWidth, 
 	}
 
 	// 미니 맵 비트 맵 객체를 초기화합니다.
-	bool result = m_MiniMapBitmap->Initialize(device, screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/map.bmp", 150, 150);
+	bool result = m_MiniMapBitmap->Initialize(device, screenWidth, screenHeight, (WCHAR*)L"../Tutorial2/data/mazemap.bmp", 150, 150);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the mini-map object.", L"Error", MB_OK);
@@ -185,12 +185,12 @@ void MiniMapClass::PositionUpdate(float positionX, float positionZ)
 	//-102.0f;
 	float m_x = positionX - 102.0f;
 	m_x = m_x / 2.08f;
-	m_pointLocationX = 642 + (abs(m_x)*1.43f);
+	m_pointLocationX = 774 + ((m_x)*1.23f);
 
 
-	float m_y = positionZ - 171.0f;
+	float m_y = positionZ - 170.0f;
 	m_y = m_y / 1.38f;
-	m_pointLocationY = 200 - (abs(m_y)*1.43);
+	m_pointLocationY =-38 -((m_y)*1.36f);
 
 	// 3x3 포인트 픽셀 이미지 크기에 따라 미니 맵에서 포인트의 중심에 위치에서 1을 뺍니다.
 	m_pointLocationX = m_pointLocationX - 1;

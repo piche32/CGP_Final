@@ -34,8 +34,10 @@ public:
 	SoundClass(const SoundClass&);
 	~SoundClass();
 
+	bool Initialize_Effect(HWND);
 	bool Initialize(HWND);
 	void Shutdown();
+	void play();
 private:
 	bool InitializeDirectSound(HWND);
 	void ShutdownDirectSound();
@@ -47,5 +49,7 @@ private:
 	IDirectSoundBuffer* m_primaryBuffer;
 
 	IDirectSoundBuffer8* m_secondaryBuffer1;
+	IDirectSoundBuffer8* m_secondaryBuffer2;
+
 };
 #endif

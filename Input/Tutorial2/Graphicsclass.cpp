@@ -35,6 +35,8 @@ GraphicsClass::GraphicsClass() {
 	cnt1 = 0;
 	cnt2 = 0;
 
+	m_Sound = 0;
+
 	wallNum = 22;
 	m_starNum = 5;
 
@@ -105,8 +107,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Camera->Render();
 	m_Camera->GetViewMatrix(baseViewMatrix);
  // Set the initial position of the camera.
-	
-	
 
 	m_baseViewMatrix = baseViewMatrix;
 
@@ -135,7 +135,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 	
 	PlayerClass* player = (PlayerClass *) m_player;
-	player->SetPos(-35.0f, 0.0f, 217.0f); //(-110.0f, 0.0f, -20.0f); //(-35.0f, 0.0f, 217.0f);
+	player->SetPos(115.0f, 0.0f, -22.0f); //(-110.0f, 0.0f, -20.0f); //(-35.0f, 0.0f, 217.0f);
+
+	//player->SetPos(-35.0f, 0.0f, -10.0f); //(-110.0f, 0.0f, -20.0f); //(-35.0f, 0.0f, 217.0f);
 	m_player->SetScale(D3DXVECTOR3(0.1f, 0.1f, 0.1f));
 	player->SetPastPos(player->GetPos()); //첫 past pos에는 현 위치 넣어주기
 	player->SetLookAt(player->GetPos() + D3DXVECTOR3(0.0f, 0.0f, 1.0f));
@@ -210,101 +212,102 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 			MessageBox(hwnd, L"Could not initialize the wall object.", L"Error", MB_OK);
 			return false;
 		}
-		result = m_wall[i].GetColl()->Initialize(m_wall[i].GetPos(), m_wall[i].GetScale(), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_wall[i].GetRot());
+		/*result = m_wall[i].GetColl()->Initialize(m_wall[i].GetPos(), m_wall[i].GetScale(), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_wall[i].GetRot());
 		if (!result) {
 			MessageBox(hwnd, L"Could not initialize the wall collider.", L"Error", MB_OK);
 			return false;
-		}
+		}*/
 	}
 
+	float m_y = 20.0f;
 	//벽 오브젝트 크기, 위치 세팅
-	m_wall[0].SetPos(-350.0f, 0.0f, 2300.0f);
-	m_wall[0].SetScale(250.0f, 50.0f, 5.0f);
-	m_wall[0].GetColl()->SetScale(m_wall[0].GetScale());
+	m_wall[0].SetPos(-350.0f, 0.0f- m_y, 2300.0f);
+	m_wall[0].SetScale(250.0f, m_y, 5.0f);
+	//m_wall[0].GetColl()->SetScale(m_wall[0].GetScale());
 
-	m_wall[1].SetPos(0.0f, 15.0f, -30.0f);
-	m_wall[1].SetScale(250.0f, 50.0f, 5.0f);
-	m_wall[1].GetColl()->SetScale(m_wall[1].GetScale());
+	m_wall[1].SetPos(0.0f, 15.0f - m_y, -30.0f);
+	m_wall[1].SetScale(250.0f, m_y, 5.0f);
+	//m_wall[1].GetColl()->SetScale(m_wall[1].GetScale());
 
-	m_wall[2].SetPos(-125.0f, 15.0f, 55.0f);
-	m_wall[2].SetScale(5.0f, 50.0f, 170.0f);
-	m_wall[2].GetColl()->SetScale(m_wall[2].GetScale());
+	m_wall[2].SetPos(-125.0f, 15.0f - m_y, 55.0f);
+	m_wall[2].SetScale(5.0f, m_y, 170.0f);
+	//m_wall[2].GetColl()->SetScale(m_wall[2].GetScale());
 
-	m_wall[3].SetPos(0.0f, 15.0f, 130.0f);
-	m_wall[3].SetScale(250.0f, 50.0f, 5.0f);
-	m_wall[3].GetColl()->SetScale(m_wall[3].GetScale());
+	m_wall[3].SetPos(0.0f, 15.0f - m_y, 130.0f);
+	m_wall[3].SetScale(250.0f, m_y, 5.0f);
+	//m_wall[3].GetColl()->SetScale(m_wall[3].GetScale());
 
-	m_wall[4].SetPos(125.0f, 15.0f, 55.0f);
-	m_wall[4].SetScale(5.0f, 50.0f, 170.0f);
-	m_wall[4].GetColl()->SetScale(m_wall[4].GetScale());
+	m_wall[4].SetPos(125.0f, 15.0f - m_y, 55.0f);
+	m_wall[4].SetScale(5.0f, m_y, 170.0f);
+	//m_wall[4].GetColl()->SetScale(m_wall[4].GetScale());
 
-	m_wall[5].SetPos(-80.0f, 15.0f, 100.0f);
-	m_wall[5].SetScale(3.0f, 50.0f, 30.0f);
-	m_wall[5].GetColl()->SetScale(m_wall[5].GetScale());
+	m_wall[5].SetPos(-80.0f, 15.0f - m_y, 100.0f);
+	m_wall[5].SetScale(3.0f, m_y, 30.0f);
+	//m_wall[5].GetColl()->SetScale(m_wall[5].GetScale());
 
-	m_wall[6].SetPos(-50.0f, 15.0f, 85.0f);
-	m_wall[6].SetScale(100.0f, 50.0f, 3.0f);
-	m_wall[6].GetColl()->SetScale(m_wall[6].GetScale());
+	m_wall[6].SetPos(-50.0f, 15.0f - m_y, 85.0f);
+	m_wall[6].SetScale(100.0f, m_y, 3.0f);
+	//m_wall[6].GetColl()->SetScale(m_wall[6].GetScale());
 
-	m_wall[7].SetPos(-100.0f, 15.0f, 55.0f);
-	m_wall[7].SetScale(50.0f, 50.0f, 3.0f);
-	m_wall[7].GetColl()->SetScale(m_wall[7].GetScale());
+	m_wall[7].SetPos(-100.0f, 15.0f - m_y, 55.0f);
+	m_wall[7].SetScale(50.0f, m_y, 3.0f);
+	//m_wall[7].GetColl()->SetScale(m_wall[7].GetScale());
 
-	m_wall[8].SetPos(27.0f, 15.0f, 55.0f);
-	m_wall[8].SetScale(100.0f, 50.0f, 3.0f);
-	m_wall[8].GetColl()->SetScale(m_wall[8].GetScale());
+	m_wall[8].SetPos(27.0f, 15.0f - m_y, 55.0f);
+	m_wall[8].SetScale(100.0f, m_y, 3.0f);
+	//m_wall[8].GetColl()->SetScale(m_wall[8].GetScale());
 
-	m_wall[9].SetPos(50.0f, 15.0f, 100.0f);
-	m_wall[9].SetScale(3.0f, 50.0f, 90.0f);
-	m_wall[9].GetColl()->SetScale(m_wall[9].GetScale());
+	m_wall[9].SetPos(50.0f, 15.0f - m_y, 100.0f);
+	m_wall[9].SetScale(3.0f, m_y, 90.0f);
+	//m_wall[9].GetColl()->SetScale(m_wall[9].GetScale());
 
-	m_wall[10].SetPos(50.0f, 15.0f, 100.0f);
-	m_wall[10].SetScale(3.0f, 50.0f, 90.0f);
-	m_wall[10].GetColl()->SetScale(m_wall[10].GetScale());
+	m_wall[10].SetPos(50.0f, 15.0f - m_y, 100.0f);
+	m_wall[10].SetScale(3.0f, m_y, 90.0f);
+	//m_wall[10].GetColl()->SetScale(m_wall[10].GetScale());
 
-	m_wall[11].SetPos(90.0f, 15.0f, 85.0f);
-	m_wall[11].SetScale(30.0f, 50.0f, 3.0f);
-	m_wall[11].GetColl()->SetScale(m_wall[11].GetScale());
+	m_wall[11].SetPos(90.0f, 15.0f - m_y, 85.0f);
+	m_wall[11].SetScale(30.0f, m_y, 3.0f);
+	//m_wall[11].GetColl()->SetScale(m_wall[11].GetScale());
+	
+	m_wall[12].SetPos(75.0f, 15.0f - m_y, 70.0f);
+	m_wall[12].SetScale(3.0f, m_y, 30.0f);
+	//m_wall[12].GetColl()->SetScale(m_wall[12].GetScale());
 
-	m_wall[12].SetPos(75.0f, 15.0f, 70.0f);
-	m_wall[12].SetScale(3.0f, 50.0f, 30.0f);
-	m_wall[12].GetColl()->SetScale(m_wall[12].GetScale());
+	m_wall[13].SetPos(-50.0f, 15.0f - m_y, 35.0f);
+	m_wall[13].SetScale(60.0f, m_y, 3.0f);
+	//m_wall[13].GetColl()->SetScale(m_wall[13].GetScale());
 
-	m_wall[13].SetPos(-50.0f, 15.0f, 35.0f);
-	m_wall[13].SetScale(60.0f, 50.0f, 3.0f);
-	m_wall[13].GetColl()->SetScale(m_wall[13].GetScale());
+	m_wall[14].SetPos(90.0f, 15.0f - m_y, 35.0f);
+	m_wall[14].SetScale(60.0f, m_y, 3.0f);
+	//m_wall[14].GetColl()->SetScale(m_wall[14].GetScale());
 
-	m_wall[14].SetPos(90.0f, 15.0f, 35.0f);
-	m_wall[14].SetScale(60.0f, 50.0f, 3.0f);
-	m_wall[14].GetColl()->SetScale(m_wall[14].GetScale());
+	m_wall[15].SetPos(-60.0f, 15.0f - m_y, 5.0f);
+	m_wall[15].SetScale(130.0f, m_y, 3.0f);
+	//m_wall[15].GetColl()->SetScale(m_wall[15].GetScale());
 
-	m_wall[15].SetPos(-60.0f, 15.0f, 5.0f);
-	m_wall[15].SetScale(130.0f, 50.0f, 3.0f);
-	m_wall[15].GetColl()->SetScale(m_wall[15].GetScale());
+	m_wall[16].SetPos(-50.0f, 15.0f - m_y, 20.0f);
+	m_wall[16].SetScale(3.0f, m_y, 30.0f);
+	//m_wall[16].GetColl()->SetScale(m_wall[16].GetScale());
+	
+	m_wall[17].SetPos(-80.0f, 15.0f - m_y, -10.0f);
+	m_wall[17].SetScale(3.0f, m_y, 20.0f);
+	//m_wall[17].GetColl()->SetScale(m_wall[17].GetScale());
 
-	m_wall[16].SetPos(-50.0f, 15.0f, 20.0f);
-	m_wall[16].SetScale(3.0f, 50.0f, 30.0f);
-	m_wall[16].GetColl()->SetScale(m_wall[16].GetScale());
+	m_wall[18].SetPos(-50.0f, 15.0f - m_y, -20.0f);
+	m_wall[18].SetScale(3.0f, m_y, 20.0f);
+	//m_wall[18].GetColl()->SetScale(m_wall[18].GetScale());
 
-	m_wall[17].SetPos(-80.0f, 15.0f, -10.0f);
-	m_wall[17].SetScale(3.0f, 50.0f, 20.0f);
-	m_wall[17].GetColl()->SetScale(m_wall[17].GetScale());
+	m_wall[19].SetPos(3.7f, 15.0f - m_y, -7.5f);
+	m_wall[19].SetScale(3.0f, m_y, 20.0f);
+	//m_wall[19].GetColl()->SetScale(m_wall[19].GetScale());
 
-	m_wall[18].SetPos(-50.0f, 15.0f, -20.0f);
-	m_wall[18].SetScale(3.0f, 50.0f, 20.0f);
-	m_wall[18].GetColl()->SetScale(m_wall[18].GetScale());
+	m_wall[20].SetPos(30.0f, 15.0f - m_y, 30.0f);
+	m_wall[20].SetScale(3.0f, m_y, 50.0f);
+	//m_wall[20].GetColl()->SetScale(m_wall[20].GetScale());
 
-	m_wall[19].SetPos(3.7f, 15.0f, -7.5f);
-	m_wall[19].SetScale(3.0f, 50.0f, 20.0f);
-	m_wall[19].GetColl()->SetScale(m_wall[19].GetScale());
-
-	m_wall[20].SetPos(30.0f, 15.0f, 30.0f);
-	m_wall[20].SetScale(3.0f, 50.0f, 50.0f);
-	m_wall[20].GetColl()->SetScale(m_wall[20].GetScale());
-
-	m_wall[21].SetPos(80.0f, 15.0f, 10.0f);
-	m_wall[21].SetScale(3.0f, 50.0f, 50.0f);
-	m_wall[21].GetColl()->SetScale(m_wall[21].GetScale());
+	m_wall[21].SetPos(80.0f, 15.0f- m_y, 10.0f);
+	m_wall[21].SetScale(3.0f, m_y, 50.0f);
+	//m_wall[21].GetColl()->SetScale(m_wall[21].GetScale());
 
 	/*m_wall[22].SetPos(0.0f, 0.0f, 20.0f);
 	m_wall[22].SetScale(250.0f, 10.0f, 100.0f);
@@ -530,6 +533,22 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	
+	// Create the sound object.
+	m_Sound = new SoundClass;
+	if (!m_Sound)
+	{
+		return false;
+	}
+	// Initialize the sound object.
+	result = m_Sound->Initialize_Effect(hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize Direct Sound.", L"Error", MB_OK);
+		return false;
+	}
+	
+
 	m_Position = new PositionClass;
 	if (!m_Position) {
 		return false;
@@ -540,6 +559,13 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 }
 
 void GraphicsClass::Shutdown() {
+	// Release the sound object.
+	if (m_Sound)
+	{
+		m_Sound->Shutdown();
+		delete m_Sound;
+		m_Sound = 0;
+	}
 
 	// 미니맵 객체를 해제합니다.
 	if (m_Time)
@@ -715,6 +741,7 @@ void GraphicsClass::Shutdown() {
 
 	return;
 }
+
 bool GraphicsClass::Frame(int screenWidth, int screenHeight, int fps, int cpu, float frameTime, int mouseX, int mouseY) {
 	bool result;
 
@@ -728,6 +755,12 @@ bool GraphicsClass::Frame(int screenWidth, int screenHeight, int fps, int cpu, f
 
 	for (int i = 0; i < m_starNum; i++) {
 		m_star[i].SetRot(0.0f, rotation, 0.0f);
+	}
+
+	result = HandleInput(m_Time->GetTime());
+	if (!result)
+	{
+		return false;
 	}
 
 	// Set the frames per second.
@@ -772,20 +805,15 @@ bool GraphicsClass::Frame(int screenWidth, int screenHeight, int fps, int cpu, f
 	{
 		D3DXVECTOR3 targetDist;
 		D3DXVec3Normalize(&targetDist, &((PlayerClass*)m_player)->GetFront());
-		targetDist = -80.0f*targetDist + D3DXVECTOR3(0.0f, 10.0f, 0.0f);
+		targetDist = -80.0f*targetDist + D3DXVECTOR3(0.0f, 30.0f, 0.0f);
 		m_Camera->SetTargetDist(targetDist);
 		m_Camera->SetPosition(m_player->GetPos() + m_Camera->GetTargetDist());
 
-		m_Camera->SetLookAt(m_player->GetPos() + D3DXVECTOR3(0.0f, 20.0f, 0.0f));
+		m_Camera->SetLookAt(m_player->GetPos() + D3DXVECTOR3(0.0f, -10.0f, 0.0f));
 	}
 
 	playerCollision();
 	
-	result = HandleInput(m_Time->GetTime());
-	if (!result)
-	{
-		return false;
-	}
 
 	//Render the graphics scene.
 	result = Render(rotation);
@@ -867,6 +895,8 @@ bool GraphicsClass::Render(float rotation) {
 	{
 		return false;
 	}
+
+
 	
 	// Turn the Z buffer back on now that all 2D rendering has completed.
 	m_D3D->TurnZBufferOn(); //3D 랜더링 하려면 꼭 켜주기..
@@ -1122,6 +1152,7 @@ bool GraphicsClass::Render(float rotation) {
 
 	m_D3D->ChangeFillMode('S');
 
+	//if(m_player->GetPos()==)
 
 	//플레인 랜더링
 	m_D3D->GetWorldMatrix(worldMatrix);
@@ -1148,6 +1179,8 @@ bool GraphicsClass::Render(float rotation) {
 		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(),
 		m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 	if (!result) { return false; }
+
+
 	
 	m_D3D->TurnZBufferOff();
 	// Turn on the alpha blending before rendering the text.
@@ -1171,6 +1204,7 @@ bool GraphicsClass::Render(float rotation) {
 	{
 		return false;
 	}
+
 	// Turn off alpha blending after rendering the text.
 	m_D3D->TurnOffAlphaBlending();
 	m_D3D->TurnZBufferOn();
@@ -1437,6 +1471,8 @@ void GraphicsClass::eatStar() {
 		if (m_player->GetColl()->Collision(m_star[i].GetColl())) {
 			//result = m_Text->ShowDebug("Star Collision Detected", m_D3D->GetDeviceContext());
 			//if (!result) return;
+			//result = m_Sound->Initialize_Effect(hwnd);
+			m_Sound->play();
 
 			m_star[i].SetActive(false);
 

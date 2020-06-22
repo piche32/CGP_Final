@@ -4,6 +4,7 @@ SoundClass::SoundClass()
 	m_DirectSound = 0;
 	m_primaryBuffer = 0;
 	m_secondaryBuffer1 = 0;
+	m_secondaryBuffer2 = 0;
 }
 
 SoundClass::SoundClass(const SoundClass& other)
@@ -13,6 +14,35 @@ SoundClass::SoundClass(const SoundClass& other)
 SoundClass::~SoundClass()
 {
 }
+bool SoundClass::Initialize_Effect(HWND hwnd) {
+
+	bool result;
+
+	// Initialize direct sound and the primary sound buffer.
+	result = InitializeDirectSound(hwnd);
+	if (!result)
+	{
+		return false;
+	}
+	// Load a wave audio file onto a secondary buffer.
+	result = LoadWaveFile((char*)"../Tutorial2/data/Star.wav", &m_secondaryBuffer1);
+	if (!result)
+	{
+		return false;
+	}
+	// Play the wave file now that it has been loaded.
+	/*result = PlayWaveFile();
+	if (!result)
+	{
+		return false;
+	}*/
+	return true;
+}
+
+void SoundClass::play() {
+	PlayWaveFile();
+}
+
 
 bool SoundClass::Initialize(HWND hwnd)
 {
@@ -43,6 +73,8 @@ void SoundClass::Shutdown()
 {
 	// Release the secondary buffer.
 	ShutdownWaveFile(&m_secondaryBuffer1);
+	ShutdownWaveFile(&m_secondaryBuffer2);
+
 	// Shutdown the Direct Sound API.
 	ShutdownDirectSound();
 	return;
@@ -293,5 +325,24 @@ bool SoundClass::PlayWaveFile()
 	{
 		return false;
 	}
+
+	// Set position at the beginning of the sound buffer.
+	//result = m_secondaryBuffer2->SetCurrentPosition(0);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
+	// Set volume of the buffer to 100%.
+	//result = m_secondaryBuffer2->SetVolume(DSBVOLUME_MAX);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
+	//// Play the contents of the secondary sound buffer.
+	//result = m_secondaryBuffer2->Play(0, 0, 0);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
 	return true;
 }
