@@ -67,6 +67,7 @@ private:
 	FogShaderClass* m_FogShader;
 
 	GameObjectClass* m_player;
+	GameObjectClass* m_object;
 
 	MiniMapClass* m_MiniMap;
 	TerrainClass* m_Terrain;
