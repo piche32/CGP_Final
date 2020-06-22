@@ -1,2 +1,8 @@
-﻿  systemclass.cpp
-  Tutorial2.vcxproj -> D:\Github\CGP_Final\Input\Debug\Tutorial2.exe
+﻿  Graphicsclass.cpp
+  c:\program files (x86)\microsoft directx sdk (june 2010)\include\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
+c:\users\gts16\desktop\directx\cgp_final\input\tutorial2\graphicsclass.cpp(1255): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\gts16\desktop\directx\cgp_final\input\tutorial2\graphicsclass.cpp(1273): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\gts16\desktop\directx\cgp_final\input\tutorial2\graphicsclass.cpp(1388): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\gts16\desktop\directx\cgp_final\input\tutorial2\graphicsclass.cpp(1409): warning C4101: 'result' :참조되지 않은 지역 변수입니다.
+c:\users\gts16\desktop\directx\cgp_final\input\tutorial2\graphicsclass.cpp(1434): warning C4101: 'result' :참조되지 않은 지역 변수입니다.
+  Tutorial2.vcxproj -> C:\Users\gts16\Desktop\Directx\CGP_Final\Input\Debug\Tutorial2.exe

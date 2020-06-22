@@ -867,12 +867,6 @@ bool GraphicsClass::Render(float rotation) {
 	{
 		return false;
 	}
-
-	// 미니맵을 렌더링 합니다.
-	if (!m_MiniMap->Render(m_D3D->GetDeviceContext(), worldMatrix, orthoMatrix, m_TextureShader))
-	{
-		return false;
-	}
 	
 	// Turn the Z buffer back on now that all 2D rendering has completed.
 	m_D3D->TurnZBufferOn(); //3D 랜더링 하려면 꼭 켜주기..
@@ -1172,6 +1166,11 @@ bool GraphicsClass::Render(float rotation) {
 		return false;
 	}
 
+	// 미니맵을 렌더링 합니다.
+	if (!m_MiniMap->Render(m_D3D->GetDeviceContext(), worldMatrix, orthoMatrix, m_TextureShader))
+	{
+		return false;
+	}
 	// Turn off alpha blending after rendering the text.
 	m_D3D->TurnOffAlphaBlending();
 	m_D3D->TurnZBufferOn();
